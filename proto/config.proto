@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package proto;
+
+
+message GetConfigListRequest {
+}
+
+message SetConfigResponse {
+}
+
+message DeleteConfigResponse {
+}
+
+message Config {
+  string CallbackID = 1;
+  repeated string Channels = 2;
+  string Text = 3; 
+  string Regexp = 5;
+  string URLTemplate = 6;
+  string BodyTemplate = 7;
+  bool Confirm = 8;
+  repeated string Actions = 9;
+}
+
+message ConfigList {
+  repeated Config config = 1;
+}
+
+service ConfigService {
+  rpc GetConfig(GetConfigListRequest) returns (ConfigList) {}
+  rpc SetConfig(Config) returns (SetConfigResponse) {}
+  rpc DeleteConfig(Config) returns (DeleteConfigResponse) {}
+}
