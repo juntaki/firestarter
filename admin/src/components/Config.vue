@@ -39,11 +39,7 @@
 </template>
 
 <script>
-import ItemList from './ItemList'
 export default {
-  components: {
-    ItemList
-  },
   data () {
     return {
       showDialog: false,
