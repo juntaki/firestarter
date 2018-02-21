@@ -24,4 +24,4 @@ RUN cd $SRC_DIR && \
 
 EXPOSE 3000
 EXPOSE 8080
-CMD ["/app/main"]
+CMD ["./main"]
