@@ -32,16 +32,27 @@ type SlackBot struct {
 	ConfigRepository  domain.ConfigRepository
 	Log               *zap.SugaredLogger
 	Session           *Session
+	channelCache      map[string]string
 }
 
-func (s *SlackBot) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// Error check
-	if r.Method != http.MethodPost {
-		s.Log.Errorf("Invalid method: %s", r.Method)
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		return
+func NewSlackBot(
+	VerificationToken string,
+	API *slack.Client,
+	ConfigRepository domain.ConfigRepository,
+	Log *zap.SugaredLogger,
+) *SlackBot {
+	return &SlackBot{
+		VerificationToken: VerificationToken,
+		API:               API,
+		ConfigRepository:  ConfigRepository,
+		Log:               Log,
+		Session:           NewSession(),
+		channelCache:      make(map[string]string),
 	}
+}
 
+func (s *SlackBot) InteractiveMessageHandler(w http.ResponseWriter, r *http.Request) {
+	// Error check
 	buf, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		s.Log.Errorf("Failed to read request body: %s", err)
@@ -209,7 +220,7 @@ func (s *SlackBot) ProcessInteractiveRequest(c *domain.Config, sess *SessionValu
 				Actions: []slack.AttachmentAction{
 					{
 						Name:    actionSelect,
-						Type:    c.Type,
+						Type:    seletType,
 						Options: opt,
 					},
 					{
@@ -270,6 +281,18 @@ func (s *SlackBot) SendRequest(c *domain.Config, sess *SessionValue) error {
 	return nil
 }
 
+func (s *SlackBot) getChannelName(channelID string) (string, error) {
+	if id, ok := s.channelCache[channelID]; ok {
+		return id, nil
+	}
+
+	ch, err := s.API.GetConversationInfo(channelID, false)
+	if err != nil {
+		return "", err
+	}
+	return ch.Name, nil
+}
+
 func (s *SlackBot) Run() error {
 	rtm := s.API.NewRTM()
 	go rtm.ManageConnection()
@@ -281,13 +304,20 @@ func (s *SlackBot) Run() error {
 			case *slack.HelloEvent:
 				s.Log.Info("Hello Event")
 			case *slack.MessageEvent:
+				if ev.Msg.SubType == "bot_message" {
+					break
+				}
 				// Get config on each event, it may be updated.
 				config, err := s.ConfigRepository.GetConfig()
 				if err != nil {
 					return err
 				}
 
-				c := config.FindMatched(ev.Channel, ev.Msg.Text)
+				name, err := s.getChannelName(ev.Msg.Channel)
+				if err != nil {
+					return err
+				}
+				c := config.FindMatched(name, ev.Msg.Text)
 				if c == nil {
 					break
 				}

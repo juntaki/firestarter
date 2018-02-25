@@ -11,6 +11,7 @@ import (
 type Session struct {
 	store  *expiresync.Map
 	expire time.Duration
+	size   int
 }
 
 const expire = 1 * time.Hour
@@ -19,6 +20,7 @@ func NewSession() *Session {
 	return &Session{
 		store:  expiresync.NewMap(),
 		expire: expire,
+		size:   0,
 	}
 }
 
@@ -40,6 +42,12 @@ func (s *Session) Get(callbackID string) (*SessionValue, bool) {
 func (s *Session) Set(callbackID string, sess *SessionValue) {
 	sessionID := s.getSessionID(callbackID)
 	s.store.Set(sessionID, sess, s.expire)
+	s.size++
+
+	if s.size > 100 {
+		s.store.DeleteExpired()
+		s.size = 0
+	}
 }
 
 func (s *Session) Create(matched []string) *SessionValue {

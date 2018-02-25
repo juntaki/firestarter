@@ -1,7 +1,6 @@
 syntax = "proto3";
 
-package proto;
-
+package firestarter;
 
 message GetConfigListRequest {
 }
@@ -9,13 +8,18 @@ message GetConfigListRequest {
 message SetConfigResponse {
 }
 
+message DeleteConfigRequest {
+  string CallbackID = 1;
+}
+
 message DeleteConfigResponse {
 }
 
 message Config {
-  string CallbackID = 1;
-  repeated string Channels = 2;
-  string Text = 3; 
+  string Title = 1;
+  string CallbackID = 2;
+  repeated string Channels = 3;
+  string Text = 4;
   string Regexp = 5;
   string URLTemplate = 6;
   string BodyTemplate = 7;
@@ -27,8 +31,16 @@ message ConfigList {
   repeated Config config = 1;
 }
 
+message Channels {
+  repeated string list = 1;
+}
+
+message GetChannelsRequest {
+}
+
 service ConfigService {
   rpc GetConfig(GetConfigListRequest) returns (ConfigList) {}
   rpc SetConfig(Config) returns (SetConfigResponse) {}
-  rpc DeleteConfig(Config) returns (DeleteConfigResponse) {}
+  rpc DeleteConfig(DeleteConfigRequest) returns (DeleteConfigResponse) {}
+  rpc GetChannels(GetChannelsRequest) returns (Channels) {}
 }

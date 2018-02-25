@@ -1,69 +1,139 @@
 <template>
 <div>
-  <el-card>
-
-    <el-button type="" @click="showDialog=true">Edit</el-button>
-  </el-card>
-  <el-dialog :visible.sync="showDialog">
+  <template v-if="newConfig">
+    <el-button style="width:100%" type="primary" @click="showDialog=true">Add config</el-button>
+  </template>
+  <template v-else>
+    <el-button type="text" @click="showDialog=true">Edit</el-button>
+  </template>
+  <el-dialog :title="title()" width="90%" :visible.sync="showDialog">
     <el-form ref="form" :model="form" label-width="120px">
-      <el-form-item label="Channels">
-        <el-select v-model="form.channels" placeholder="Channels"
-          multiple auto-complete filterable style="width: 100%">
-          <el-option v-for="item in channel" :key="item" :label="item" :value="item"></el-option>
+      <el-form-item label="Title" prop="title" :rules="[{ required: true, message: 'Please input title', trigger: 'change' }]">
+        <el-input v-model="form.title" placeholder="Unique and "></el-input>
+      </el-form-item>
+      <el-form-item label="Channels" prop="channelsList"
+        :rules="[{ required: true, message: 'Please input channels', trigger: 'change' }]">
+        <el-select v-model="form.channelsList" placeholder="Channels"
+          multiple auto-complete filterable allow-create style="width: 100%">
+          <el-option v-for="item in channels" :key="item" :label="item" :value="item"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="Text Template">
-        <el-input v-model="form.text" placeholder="Text Template"></el-input>
+      <el-form-item label="Regexp" prop="regexp"
+      :rules="[{ required: true, message: 'Please input Regexp', trigger: 'change' }]">
+        <el-input v-model="form.regexp" placeholder="Regexp"></el-input>
+      </el-form-item>
+      <el-form-item label="Text" prop="text"
+      :rules="[{ required: true, message: 'Please input Text', trigger: 'change' }]">
+        <el-input v-model="form.text" placeholder="Text"></el-input>
       </el-form-item>
       <el-form-item label="Actions">
-        <el-select v-model="form.actions" placeholder="Actions"
+        <el-select v-model="form.actionsList" placeholder="Actions"
           multiple allow-create filterable style="width: 100%"
           no-data-text="Please input action">
         </el-select>
       </el-form-item>
-      <el-form-item label="URL Template">
-        <el-input v-model="form.urlTemplate" placeholder="URL Template"></el-input>
+      <el-form-item label="URL Template" prop="urltemplate"
+      :rules="[{ required: true, message: 'Please input URL Template', trigger: 'change' }]">
+        <el-input v-model="form.urltemplate" placeholder="URL Template"></el-input>
       </el-form-item>
       <el-form-item label="Body Template">
-        <el-input v-model="form.bodyTemplate" placeholder="Body Template"></el-input>
+        <el-input v-model="form.bodytemplate" placeholder="Body Template"></el-input>
       </el-form-item>
 
       <el-form-item label="Confirm">
         <el-switch v-model="form.confirm"></el-switch>
       </el-form-item>
 
-      <el-button type="primary" style="width: 100%">Submit</el-button>
+      <el-button type="primary" style="width: 100%" @click="onSubmit()">Submit</el-button>
+      <template v-if="!newConfig">
+        <el-button type="danger" style="width: 100%" @click="showDeleteDialog=true">Delete this config</el-button>
+        <el-dialog :title="'Delete ' + config.title" width="400px" :visible.sync="showDeleteDialog" append-to-body="">
+          <span>Are you sure to delete this config?</span>
+          <span slot="footer" class="dialog-footer">
+            <el-button type="danger" @click="deleteConfig()">Yes</el-button><el-button @click="showDeleteDialog=false">Cancel</el-button>
+          </span>
+        </el-dialog>
+      </template>
     </el-form>
   </el-dialog>
   </div>
 </template>
 
 <script>
+import config from '../../proto/config_pb_twirp'
 export default {
+  props: ['config', 'channels'],
   data () {
+    const form = this.config
+      ? JSON.parse(JSON.stringify(this.config))
+      : { id: null }
+    const host = location.protocol + '//' + location.host
     return {
+      client: config.createConfigServiceClient(host),
       showDialog: false,
-      channel: [
-        'hoge', 'bottest', 'hoge1', 'bottest1'
-      ],
-      form: {
-        channels: ['hoge'],
-        actions: ['hoge'],
-        text: 'sample',
-        id: 'hoge',
-        urlTemplate: 'u tmp',
-        bodyTemplate: 'body',
-        confirm: true
+      showDeleteDialog: false,
+      form: form
+    }
+  },
+  computed: {
+    newConfig () {
+      if (this.config) {
+        return !this.config.callbackid // should be false
+      } else {
+        return true
       }
     }
   },
   methods: {
     onSubmit () {
-      console.log('submit!')
+      this.$refs['form'].validate((valid) => {
+        if (valid) this.update()
+      })
+    },
+    update () {
+      this.client.setConfig(this.form).then(
+        res => {
+          this.$message({
+            message: 'Config have been successfully updated',
+            type: 'success'
+          })
+          this.showDialog = false
+          this.$emit('updateConfig')
+          if (this.newConfig) {
+            this.$refs['form'].resetFields()
+          }
+        },
+        err => {
+          this.$message.error({
+            message: 'Oops, error: ' + err
+          })
+        }
+      )
+    },
+    title () {
+      if (this.newConfig) {
+        return 'Add config'
+      } else {
+        return 'Edit ' + this.form.title
+      }
+    },
+    deleteConfig () {
+      this.client.deleteConfig({callbackid: this.form.callbackid}).then(res => {
+        this.$message({
+          message: 'Config have been successfully deleted',
+          type: 'success'
+        })
+        this.showDialog = false
+        this.$emit('updateConfig')
+      },
+      err => {
+        this.$message.error({
+          message: 'Oops, error: ' + err
+        })
+      })
     }
   }
 }
-
 </script>
 
 <style scoped>
