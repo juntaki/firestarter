@@ -9,35 +9,35 @@
   <el-dialog :title="title()" width="90%" :visible.sync="showDialog">
     <el-form ref="form" :model="form" label-width="120px">
       <el-form-item label="Title" prop="title" :rules="[{ required: true, message: 'Please input title', trigger: 'change' }]">
-        <el-input v-model="form.title" placeholder="Unique and "></el-input>
+        <el-input v-model="form.title" placeholder="Deploy bot for my team"></el-input>
       </el-form-item>
       <el-form-item label="Channels" prop="channelsList"
         :rules="[{ required: true, message: 'Please input channels', trigger: 'change' }]">
-        <el-select v-model="form.channelsList" placeholder="Channels"
+        <el-select v-model="form.channelsList" placeholder="general random"
           multiple auto-complete filterable allow-create style="width: 100%">
           <el-option v-for="item in channels" :key="item" :label="item" :value="item"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="Regexp" prop="regexp"
       :rules="[{ required: true, message: 'Please input Regexp', trigger: 'change' }]">
-        <el-input v-model="form.regexp" placeholder="Regexp"></el-input>
+        <el-input v-model="form.regexp" placeholder="^depoy (.*)$"></el-input>
       </el-form-item>
       <el-form-item label="Text" prop="text"
       :rules="[{ required: true, message: 'Please input Text', trigger: 'change' }]">
-        <el-input v-model="form.text" placeholder="Text"></el-input>
+        <el-input v-model="form.text" placeholder="Deploy my app"></el-input>
       </el-form-item>
       <el-form-item label="Actions">
-        <el-select v-model="form.actionsList" placeholder="Actions"
+        <el-select v-model="form.actionsList" placeholder="master branch1 branch2"
           multiple allow-create filterable style="width: 100%"
           no-data-text="Please input action">
         </el-select>
       </el-form-item>
       <el-form-item label="URL Template" prop="urltemplate"
       :rules="[{ required: true, message: 'Please input URL Template', trigger: 'change' }]">
-        <el-input v-model="form.urltemplate" placeholder="URL Template"></el-input>
+        <el-input v-model="form.urltemplate" placeholder="https://example.com/deploy?param={{index .matched 1}}&value={{value}}"></el-input>
       </el-form-item>
       <el-form-item label="Body Template">
-        <el-input v-model="form.bodytemplate" placeholder="Body Template"></el-input>
+        <el-input v-model="form.bodytemplate" placeholder="{ value: '{{value}}' }"></el-input>
       </el-form-item>
 
       <el-form-item label="Confirm">

@@ -214,7 +214,7 @@ func (s *SlackBot) ProcessInteractiveRequest(c *domain.Config, sess *SessionValu
 	params := slack.PostMessageParameters{
 		Attachments: []slack.Attachment{
 			slack.Attachment{
-				Text:       c.Text,
+				Text:       "Select your choice",
 				Color:      "#f9a41b",
 				CallbackID: c.CallbackID + "@" + sess.id,
 				Actions: []slack.AttachmentAction{
