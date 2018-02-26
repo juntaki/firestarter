@@ -1,11 +1,18 @@
 # firestarter
 
-Simple bot framework
+Bot generator
 
+## Start with docker
+
+Go http://localhost:8080 for configuration.
 
 ~~~
-export SLACK_TOKEN=xoxb-xxxxxxxxxxxxxxxx-xxxxxxxxxxxxx
-export SLACK_VERIFICATION_TOKEN=xxxxxxxxxxxxxx
+docker run \
+ -v /path/to/config:/app/config \
+ -p 3000:3000 -p 8080:8080 \
+ -e SLACK_VERIFICATION_TOKEN=xxxxxxxxxxxxxx \
+ -e SLACK_TOKEN=xoxb-xxxxxxxxxxxxxx \
+ juntaki/firestarter
 ~~~
 
 ## Reference

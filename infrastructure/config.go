@@ -24,6 +24,8 @@ type SaveConfig struct {
 	Type               string
 }
 
+var configFile = "config/config.json"
+
 type ConfigRepositoryImpl struct {
 	currentConfig map[string]*SaveConfig
 	mutex         sync.RWMutex
@@ -41,7 +43,7 @@ func NewConfigRepositoryImpl() *ConfigRepositoryImpl {
 func (c *ConfigRepositoryImpl) GetConfig() (domain.ConfigMap, error) {
 	if !c.loaded {
 		c.mutex.Lock()
-		bytes, err := ioutil.ReadFile("config.json")
+		bytes, err := ioutil.ReadFile(configFile)
 		if err != nil {
 			pathErr := err.(*os.PathError)
 			errno := pathErr.Err.(syscall.Errno)
@@ -80,7 +82,7 @@ func (c *ConfigRepositoryImpl) saveConfig() error {
 		return errors.Wrap(err, "JSON marshal failed")
 	}
 
-	err = ioutil.WriteFile("config.json", bytes, 0600)
+	err = ioutil.WriteFile(configFile, bytes, 0600)
 	if err != nil {
 		return errors.Wrap(err, "Failed to write file")
 	}
