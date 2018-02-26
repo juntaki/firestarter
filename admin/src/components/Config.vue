@@ -44,8 +44,8 @@
         <el-switch v-model="form.confirm"></el-switch>
       </el-form-item>
 
-      <el-button type="primary" style="width: 100%" @click="onSubmit()">Submit</el-button>
-      <template v-if="!newConfig">
+      <div><el-button type="primary" style="width: 100%" @click="onSubmit()">Submit</el-button></div>
+      <div v-if="!newConfig">
         <el-button type="danger" style="width: 100%" @click="showDeleteDialog=true">Delete this config</el-button>
         <el-dialog :title="'Delete ' + config.title" width="400px" :visible.sync="showDeleteDialog" append-to-body="">
           <span>Are you sure to delete this config?</span>
@@ -53,7 +53,7 @@
             <el-button type="danger" @click="deleteConfig()">Yes</el-button><el-button @click="showDeleteDialog=false">Cancel</el-button>
           </span>
         </el-dialog>
-      </template>
+      </div>
     </el-form>
   </el-dialog>
   </div>
