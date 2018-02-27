@@ -1,8 +1,10 @@
 # firestarter
 
-Bot generator
+Configurable slack bot with simple Web UI
 
-## Start with docker
+## How to run
+
+### Start with docker
 
 Go http://localhost:8080 for configuration.
 
@@ -10,9 +12,32 @@ Go http://localhost:8080 for configuration.
 docker run \
  -v /path/to/config:/app/config \
  -p 3000:3000 -p 8080:8080 \
- -e SLACK_VERIFICATION_TOKEN=xxxxxxxxxxxxxx \
  -e SLACK_TOKEN=xoxb-xxxxxxxxxxxxxx \
+ -e SLACK_VERIFICATION_TOKEN=xxxxxxxxxxxxxx \
  juntaki/firestarter
+~~~
+
+### Start from local (for development)
+
+Install dependency package and build.
+
+~~~
+go get -u -v
+go build -o firestarter
+~~~
+
+~~~
+cd admin
+yarn install
+yarn build
+~~~
+
+Set environment variables, and run.
+
+~~~
+export SLACK_TOKEN=xoxb-xxxxxxxxxxxxxx
+export SLACK_VERIFICATION_TOKEN=xxxxxxxxxxxxxx
+./firestarter
 ~~~
 
 ## Reference
