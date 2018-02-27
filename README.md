@@ -40,6 +40,11 @@ export SLACK_VERIFICATION_TOKEN=xxxxxxxxxxxxxx
 ./firestarter
 ~~~
 
+## Slack configuration
+
+1. [Create Slack app](https://api.slack.com/apps)
+2. Set Interactive Components -> Request URL to http://your-hostname:3000 (you should use https)
+
 ## Reference
 
 * https://github.com/tcnksm/go-slack-interactive
