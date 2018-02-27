@@ -22,6 +22,7 @@
       :rules="[{ required: true, message: 'Please input Regexp', trigger: 'change' }]">
         <el-input v-model="form.regexp" placeholder="^depoy (.*)$"></el-input>
       </el-form-item>
+
       <el-form-item label="Text" prop="text"
       :rules="[{ required: true, message: 'Please input Text', trigger: 'change' }]">
         <el-input v-model="form.text" placeholder="Deploy my app"></el-input>
@@ -32,16 +33,16 @@
           no-data-text="Please input action">
         </el-select>
       </el-form-item>
+      <el-form-item label="Confirm">
+        <el-switch v-model="form.confirm"></el-switch>
+      </el-form-item>
+
       <el-form-item label="URL Template" prop="urltemplate"
       :rules="[{ required: true, message: 'Please input URL Template', trigger: 'change' }]">
         <el-input v-model="form.urltemplate" placeholder="https://example.com/deploy?param={{index .matched 1}}&value={{value}}"></el-input>
       </el-form-item>
       <el-form-item label="Body Template">
         <el-input v-model="form.bodytemplate" placeholder="{ value: '{{value}}' }"></el-input>
-      </el-form-item>
-
-      <el-form-item label="Confirm">
-        <el-switch v-model="form.confirm"></el-switch>
       </el-form-item>
 
       <div><el-button type="primary" style="width: 100%" @click="onSubmit()">Submit</el-button></div>
@@ -86,7 +87,7 @@ export default {
   },
   methods: {
     onSubmit () {
-      this.$refs['form'].validate((valid) => {
+      this.$refs['form'].validate(valid => {
         if (valid) this.update()
       })
     },
@@ -118,19 +119,21 @@ export default {
       }
     },
     deleteConfig () {
-      this.client.deleteConfig({callbackid: this.form.callbackid}).then(res => {
-        this.$message({
-          message: 'Config have been successfully deleted',
-          type: 'success'
-        })
-        this.showDialog = false
-        this.$emit('updateConfig')
-      },
-      err => {
-        this.$message.error({
-          message: 'Oops, error: ' + err
-        })
-      })
+      this.client.deleteConfig({ callbackid: this.form.callbackid }).then(
+        res => {
+          this.$message({
+            message: 'Config have been successfully deleted',
+            type: 'success'
+          })
+          this.showDialog = false
+          this.$emit('updateConfig')
+        },
+        err => {
+          this.$message.error({
+            message: 'Oops, error: ' + err
+          })
+        }
+      )
     }
   }
 }

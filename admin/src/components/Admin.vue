@@ -22,20 +22,20 @@
         <el-col :span="18">{{config.text}}</el-col>
       </el-row>
       <el-row>
-        <el-col :span="6">URL</el-col>
-        <el-col :span="18">{{config.urltemplate}}</el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="6">Body</el-col>
-        <el-col :span="18">{{config.bodytemplate}}</el-col>
-      </el-row>
-      <el-row>
         <el-col :span="6">Actions</el-col>
         <el-col :span="18">{{config.actionsList.join(',')}}</el-col>
       </el-row>
       <el-row>
         <el-col :span="6">Confirm</el-col>
         <el-col :span="18">{{config.confirm}}</el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="6">URL Template</el-col>
+        <el-col :span="18">{{config.urltemplate}}</el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="6">Body Template</el-col>
+        <el-col :span="18">{{config.bodytemplate}}</el-col>
       </el-row>
     </el-card>
     <div class="config-card">
