@@ -33,6 +33,7 @@ type SlackBot struct {
 	Log               *zap.SugaredLogger
 	Session           *Session
 	channelCache      map[string]string
+	sqsMode           bool
 }
 
 func NewSlackBot(
@@ -40,6 +41,7 @@ func NewSlackBot(
 	API *slack.Client,
 	ConfigRepository domain.ConfigRepository,
 	Log *zap.SugaredLogger,
+	sqsMode bool,
 ) *SlackBot {
 	return &SlackBot{
 		VerificationToken: VerificationToken,
@@ -48,6 +50,7 @@ func NewSlackBot(
 		Log:               Log,
 		Session:           NewSession(),
 		channelCache:      make(map[string]string),
+		sqsMode:           sqsMode,
 	}
 }
 
@@ -97,7 +100,7 @@ func (s *SlackBot) InteractiveMessageHandler(w http.ResponseWriter, r *http.Requ
 	sess, ok := s.Session.Get(message.CallbackID)
 	if !ok {
 		s.Log.Errorw("Session expired", zap.String("Session ID", strings.Split(message.CallbackID, "@")[1]))
-		responseMessage(w, message.OriginalMessage, ":x: Session is expired", "")
+		s.responseMessage(w, message.OriginalMessage, ":x: Session is expired", "", message.Channel)
 		return
 	}
 
@@ -135,15 +138,27 @@ func (s *SlackBot) InteractiveMessageHandler(w http.ResponseWriter, r *http.Requ
 			w.Header().Add("Content-type", "application/json")
 			w.WriteHeader(http.StatusOK)
 			json.NewEncoder(w).Encode(&originalMessage)
+
+			if s.sqsMode {
+				_, _, _, err := s.API.SendMessage(
+					message.Channel.ID,
+					slack.MsgOptionUpdate(originalMessage.Timestamp),
+					slack.MsgOptionAttachments(originalMessage.Attachments[0]),
+					slack.MsgOptionText(originalMessage.Text, false),
+				)
+				if err != nil {
+					s.Log.Error(err)
+				}
+			}
 			return
 		} else {
 			err := s.SendRequest(q, sess)
 			if err != nil {
 				s.Log.Errorw("Send request failed", zap.Error(err))
-				responseMessage(w, message.OriginalMessage, ":x: "+err.Error(), "")
+				s.responseMessage(w, message.OriginalMessage, ":x: "+err.Error(), "", message.Channel)
 			} else {
 				title := fmt.Sprintf(":ok: @%s start this, %s", message.User.Name, sess.value)
-				responseMessage(w, message.OriginalMessage, title, "")
+				s.responseMessage(w, message.OriginalMessage, title, "", message.Channel)
 			}
 			return
 		}
@@ -151,16 +166,16 @@ func (s *SlackBot) InteractiveMessageHandler(w http.ResponseWriter, r *http.Requ
 		err = s.SendRequest(q, sess)
 		if err != nil {
 			s.Log.Errorw("Send request failed", zap.Error(err))
-			responseMessage(w, message.OriginalMessage, ":x: "+err.Error(), "")
+			s.responseMessage(w, message.OriginalMessage, ":x: "+err.Error(), "", message.Channel)
 		} else {
 			title := fmt.Sprintf(":ok: @%s confirmed, %s", message.User.Name, (sess).value)
-			responseMessage(w, message.OriginalMessage, title, "")
+			s.responseMessage(w, message.OriginalMessage, title, "", message.Channel)
 		}
 		return
 	case actionCancel: // 3. Cancel button
 		s.Log.Infow("Request canceled", zap.String("Session ID", sess.id))
 		title := fmt.Sprintf(":x: @%s canceled the request", message.User.Name)
-		responseMessage(w, message.OriginalMessage, title, "")
+		s.responseMessage(w, message.OriginalMessage, title, "", message.Channel)
 		return
 	default:
 		s.Log.Errorf("Invalid action was submitted: %s", action.Name)
@@ -169,7 +184,7 @@ func (s *SlackBot) InteractiveMessageHandler(w http.ResponseWriter, r *http.Requ
 	}
 }
 
-func responseMessage(w http.ResponseWriter, original slack.Message, title, value string) {
+func (s *SlackBot) responseMessage(w http.ResponseWriter, original slack.Message, title, value string, channel slack.Channel) {
 	original.Attachments[0].Actions = []slack.AttachmentAction{} // empty buttons
 	original.Attachments[0].Fields = []slack.AttachmentField{
 		{
@@ -182,6 +197,18 @@ func responseMessage(w http.ResponseWriter, original slack.Message, title, value
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(&original)
+
+	if s.sqsMode {
+		_, _, _, err := s.API.SendMessage(
+			channel.ID,
+			slack.MsgOptionUpdate(original.Timestamp),
+			slack.MsgOptionAttachments(original.Attachments[0]),
+			slack.MsgOptionText(original.Text, false),
+		)
+		if err != nil {
+			s.Log.Error(err)
+		}
+	}
 }
 
 func (s *SlackBot) ProcessNonInteractiveRequest(c *domain.Config, sess *SessionValue, channel string) error {

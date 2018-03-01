@@ -7,6 +7,7 @@ Configurable slack bot with simple Web UI
 ### Start with docker
 
 Go http://localhost:8080 for configuration.
+:3000 is for slack interactive message. Go Your Slack App setting page, set http://yourhostname:3000 to Interactive Components -> Request URL.
 
 ~~~
 docker run \
@@ -16,6 +17,26 @@ docker run \
  -e SLACK_VERIFICATION_TOKEN=xxxxxxxxxxxxxx \
  juntaki/firestarter
 ~~~
+
+### Start with docker (SQS proxy mode)
+
+Even if you are in a firewall, you can use interactive message w/o opening :3000.
+See details for [juntaki/firestarter-sqs-proxy](https://github.com/juntaki/firestarter-sqs-proxy)
+
+~~~
+docker run \
+ -v /path/to/config:/app/config \
+ -p 8080:8080 \
+ -e SLACK_TOKEN=xoxb-xxxxxxxxxxxxxx \
+ -e SLACK_VERIFICATION_TOKEN=xxxxxxxxxxxxxx \
+ -e AWS_ACCESS_KEY_ID=AKIAxxxx \
+ -e AWS_SECRET_ACCESS_KEY=xxxxxxx \
+ -e SQS_URL=https://sqs.xxxxxx.amazonaws.com/xxxxxxxxxx/xxxxxxxx \
+ -e AWS_REGION=xxxxxxxx \
+ juntaki/firestarter
+~~~
+
+
 
 ### Start from local (for development)
 
