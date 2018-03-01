@@ -33,6 +33,7 @@ type SlackBot struct {
 	Log               *zap.SugaredLogger
 	Session           *Session
 	channelCache      map[string]string
+	sqsMode           bool
 }
 
 func NewSlackBot(
@@ -40,6 +41,7 @@ func NewSlackBot(
 	API *slack.Client,
 	ConfigRepository domain.ConfigRepository,
 	Log *zap.SugaredLogger,
+	sqsMode bool,
 ) *SlackBot {
 	return &SlackBot{
 		VerificationToken: VerificationToken,
@@ -48,6 +50,7 @@ func NewSlackBot(
 		Log:               Log,
 		Session:           NewSession(),
 		channelCache:      make(map[string]string),
+		sqsMode:           sqsMode,
 	}
 }
 
@@ -135,6 +138,18 @@ func (s *SlackBot) InteractiveMessageHandler(w http.ResponseWriter, r *http.Requ
 			w.Header().Add("Content-type", "application/json")
 			w.WriteHeader(http.StatusOK)
 			json.NewEncoder(w).Encode(&originalMessage)
+
+			if s.sqsMode {
+				_, _, _, err := s.API.SendMessage(
+					message.Channel.ID,
+					slack.MsgOptionUpdate(originalMessage.Timestamp),
+					slack.MsgOptionAttachments(originalMessage.Attachments[0]),
+					slack.MsgOptionText(originalMessage.Text, false),
+				)
+				if err != nil {
+					s.Log.Error(err)
+				}
+			}
 			return
 		} else {
 			err := s.SendRequest(q, sess)
@@ -183,14 +198,16 @@ func (s *SlackBot) responseMessage(w http.ResponseWriter, original slack.Message
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(&original)
 
-	_, _, _, err := s.API.SendMessage(
-		channel.ID,
-		slack.MsgOptionUpdate(original.Timestamp),
-		slack.MsgOptionAttachments(original.Attachments[0]),
-		slack.MsgOptionText(original.Msg.Text, false),
-	)
-	if err != nil {
-		s.Log.Error(err)
+	if s.sqsMode {
+		_, _, _, err := s.API.SendMessage(
+			channel.ID,
+			slack.MsgOptionUpdate(original.Timestamp),
+			slack.MsgOptionAttachments(original.Attachments[0]),
+			slack.MsgOptionText(original.Text, false),
+		)
+		if err != nil {
+			s.Log.Error(err)
+		}
 	}
 }
 

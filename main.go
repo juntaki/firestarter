@@ -11,6 +11,7 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/juntaki/firestarter-sqs-proxy/lib"
 	"github.com/juntaki/firestarter/application"
 	"github.com/juntaki/firestarter/domain"
 	"github.com/juntaki/firestarter/infrastructure"
@@ -34,6 +35,17 @@ func main() {
 		logger.Error("SLACK_VERIFICATION_TOKEN is required")
 	}
 
+	// SQS mode enabled?
+	var proxy *lib.SQSProxy
+	sqsMode := false
+	url := os.Getenv("SQS_URL")
+	if len(url) != 0 {
+		proxy, err = lib.NewSQSProxy(url, "http://localhost:3000")
+		if err == nil {
+			sqsMode = true
+		}
+	}
+
 	slackAPI := slack.New(token)
 	configRepository := infrastructure.NewConfigRepositoryImpl()
 	chatRepository := &infrastructure.ChatRepositorySlackImpl{API: slackAPI}
@@ -43,6 +55,7 @@ func main() {
 		slackAPI,
 		configRepository,
 		logger,
+		sqsMode,
 	)
 
 	botRouter := chi.NewRouter()
@@ -78,6 +91,10 @@ func main() {
 	eg.Go(func() error { return http.ListenAndServe(":3000", botRouter) })
 	// start HTTP server for admin.
 	eg.Go(func() error { return http.ListenAndServe(":8080", adminRouter) })
+	// start SQS proxy, if enabled
+	if sqsMode {
+		eg.Go(func() error { return proxy.Run() })
+	}
 
 	err = eg.Wait()
 	if err != nil {
