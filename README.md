@@ -1,6 +1,7 @@
 # firestarter
 
-![Docker Automated build](https://img.shields.io/docker/automated/juntaki/firestarter.svg)
+
+[![Docker Automated build](https://img.shields.io/docker/automated/juntaki/firestarter.svg)](https://hub.docker.com/r/juntaki/firestarter/)
 
 Configurable slack bot with simple Web UI
 
