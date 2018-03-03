@@ -10,6 +10,7 @@ import (
 
 type ConfigRepository interface {
 	GetConfigList() (ConfigMap, error)
+	GetConfig(ID string) (*Config, error)
 	SetConfig(*Config) error
 	IsExist(ID string) (bool, error)
 	DeleteConfig(ID string) error

@@ -99,6 +99,20 @@ func (c *ConfigRepositoryImpl) loadConfigIfNeeded() error {
 	return nil
 }
 
+func (c *ConfigRepositoryImpl) GetConfig(ID string) (*domain.Config, error) {
+	all, err := c.GetConfigList()
+	if err != nil {
+		return nil, errors.Wrap(err, "Get config failed")
+	}
+
+	config, ok := all[ID]
+	if !ok {
+		return nil, errors.New("Not found")
+	}
+
+	return config, nil
+}
+
 func (c *ConfigRepositoryImpl) SetConfig(config *domain.Config) error {
 	err := c.loadConfigIfNeeded()
 	if err != nil {

@@ -15,7 +15,12 @@ type AdminAPI struct {
 }
 
 func (a *AdminAPI) GetConfig(ctx context.Context, request *proto.GetConfigRequest) (*proto.Config, error) {
-	return &proto.Config{}, nil
+	config, err := a.ConfigRepository.GetConfig(request.CallbackID)
+	if err != nil {
+		return &proto.Config{}, err
+	}
+
+	return a.configToPbConfig(config), nil
 }
 
 func (a *AdminAPI) GetConfigList(ctx context.Context, request *proto.GetConfigListRequest) (*proto.ConfigList, error) {
