@@ -33,7 +33,7 @@ func TestNewConfigRepositoryImpl(t *testing.T) {
 	}
 }
 
-func TestConfigRepositoryImpl_GetConfig(t *testing.T) {
+func TestConfigRepositoryImpl_GetConfigList(t *testing.T) {
 	type fields struct {
 		currentConfig map[string]*SaveConfig
 		mutex         *sync.RWMutex
@@ -103,13 +103,13 @@ func TestConfigRepositoryImpl_GetConfig(t *testing.T) {
 				loaded:        tt.fields.loaded,
 				configFile:    tt.fields.configFile,
 			}
-			got, err := c.GetConfig()
+			got, err := c.GetConfigList()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("ConfigRepositoryImpl.GetConfig() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("ConfigRepositoryImpl.GetConfigList() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ConfigRepositoryImpl.GetConfig() = %v, want %v", got, tt.want)
+				t.Errorf("ConfigRepositoryImpl.GetConfigList() = %v, want %v", got, tt.want)
 			}
 		})
 	}
