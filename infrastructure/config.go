@@ -24,26 +24,26 @@ type SaveConfig struct {
 	Type               string
 }
 
-var configFile = "config/config.json"
-
 type ConfigRepositoryImpl struct {
 	currentConfig map[string]*SaveConfig
-	mutex         sync.RWMutex
+	mutex         *sync.RWMutex
 	loaded        bool
+	configFile    string
 }
 
 func NewConfigRepositoryImpl() *ConfigRepositoryImpl {
 	return &ConfigRepositoryImpl{
 		currentConfig: make(map[string]*SaveConfig),
-		mutex:         sync.RWMutex{},
+		mutex:         &sync.RWMutex{},
 		loaded:        false,
+		configFile:    "config/config.json",
 	}
 }
 
 func (c *ConfigRepositoryImpl) GetConfigList() (domain.ConfigMap, error) {
 	if !c.loaded {
 		c.mutex.Lock()
-		bytes, err := ioutil.ReadFile(configFile)
+		bytes, err := ioutil.ReadFile(c.configFile)
 		if err != nil {
 			pathErr := err.(*os.PathError)
 			errno := pathErr.Err.(syscall.Errno)
@@ -82,7 +82,7 @@ func (c *ConfigRepositoryImpl) saveConfig() error {
 		return errors.Wrap(err, "JSON marshal failed")
 	}
 
-	err = ioutil.WriteFile(configFile, bytes, 0600)
+	err = ioutil.WriteFile(c.configFile, bytes, 0600)
 	if err != nil {
 		return errors.Wrap(err, "Failed to write file")
 	}

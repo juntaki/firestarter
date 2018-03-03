@@ -1,0 +1,19 @@
+{
+  "ba8oiiei1gbjr0ucqbo0": {
+    "Title": "Test",
+    "Channels": [
+      "bottest"
+    ],
+    "Text": "Deploy app",
+    "RegexpString": "^deploy$",
+    "Actions": [
+      "master",
+      "branch"
+    ],
+    "CallbackID": "ba8oiiei1gbjr0ucqbo0",
+    "Confirm": true,
+    "URLTemplateString": "http://httpbin.org/post?test={{index .matched 1}}",
+    "BodyTemplateString": "{ value : {{index .matched 1}} }",
+    "Type": ""
+  }
+}
