@@ -74,6 +74,32 @@
           "200": {
             "description": "",
             "schema": {
+              "$ref": "#/definitions/firestarterConfig"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/firestarterGetConfigRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ConfigService"
+        ]
+      }
+    },
+    "/twirp/firestarter.ConfigService/GetConfigList": {
+      "post": {
+        "operationId": "GetConfigList",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
               "$ref": "#/definitions/firestarterConfigList"
             }
           }
@@ -198,6 +224,14 @@
     },
     "firestarterGetConfigListRequest": {
       "type": "object"
+    },
+    "firestarterGetConfigRequest": {
+      "type": "object",
+      "properties": {
+        "CallbackID": {
+          "type": "string"
+        }
+      }
     },
     "firestarterSetConfigResponse": {
       "type": "object"

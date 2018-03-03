@@ -2,6 +2,10 @@ syntax = "proto3";
 
 package firestarter;
 
+message GetConfigRequest {
+  string CallbackID = 1;
+}
+
 message GetConfigListRequest {
 }
 
@@ -39,7 +43,8 @@ message GetChannelsRequest {
 }
 
 service ConfigService {
-  rpc GetConfig(GetConfigListRequest) returns (ConfigList) {}
+  rpc GetConfigList(GetConfigListRequest) returns (ConfigList) {}
+  rpc GetConfig(GetConfigRequest) returns (Config) {}
   rpc SetConfig(Config) returns (SetConfigResponse) {}
   rpc DeleteConfig(DeleteConfigRequest) returns (DeleteConfigResponse) {}
   rpc GetChannels(GetChannelsRequest) returns (Channels) {}

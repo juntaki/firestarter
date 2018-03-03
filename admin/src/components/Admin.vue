@@ -70,7 +70,7 @@ export default {
   methods: {
     update () {
       const c = new pb.GetConfigListRequest()
-      this.client.getConfig(c).then(
+      this.client.getConfigList(c).then(
         res => {
           this.configList = res.configList
         },

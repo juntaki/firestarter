@@ -14,7 +14,11 @@ type AdminAPI struct {
 	Validator        *domain.Validator
 }
 
-func (a *AdminAPI) GetConfig(ctx context.Context, request *proto.GetConfigListRequest) (*proto.ConfigList, error) {
+func (a *AdminAPI) GetConfig(ctx context.Context, request *proto.GetConfigRequest) (*proto.Config, error) {
+	return &proto.Config{}, nil
+}
+
+func (a *AdminAPI) GetConfigList(ctx context.Context, request *proto.GetConfigListRequest) (*proto.ConfigList, error) {
 	config, err := a.ConfigRepository.GetConfig()
 	if err != nil {
 		return &proto.ConfigList{}, err
