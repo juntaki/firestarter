@@ -1,0 +1,206 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "config.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/twirp/firestarter.ConfigService/DeleteConfig": {
+      "post": {
+        "operationId": "DeleteConfig",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/firestarterDeleteConfigResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/firestarterDeleteConfigRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ConfigService"
+        ]
+      }
+    },
+    "/twirp/firestarter.ConfigService/GetChannels": {
+      "post": {
+        "operationId": "GetChannels",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/firestarterChannels"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/firestarterGetChannelsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ConfigService"
+        ]
+      }
+    },
+    "/twirp/firestarter.ConfigService/GetConfig": {
+      "post": {
+        "operationId": "GetConfig",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/firestarterConfigList"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/firestarterGetConfigListRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ConfigService"
+        ]
+      }
+    },
+    "/twirp/firestarter.ConfigService/SetConfig": {
+      "post": {
+        "operationId": "SetConfig",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/firestarterSetConfigResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/firestarterConfig"
+            }
+          }
+        ],
+        "tags": [
+          "ConfigService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "firestarterChannels": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "firestarterConfig": {
+      "type": "object",
+      "properties": {
+        "Title": {
+          "type": "string"
+        },
+        "CallbackID": {
+          "type": "string"
+        },
+        "Channels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "Text": {
+          "type": "string"
+        },
+        "Regexp": {
+          "type": "string"
+        },
+        "URLTemplate": {
+          "type": "string"
+        },
+        "BodyTemplate": {
+          "type": "string"
+        },
+        "Confirm": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "Actions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "firestarterConfigList": {
+      "type": "object",
+      "properties": {
+        "config": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/firestarterConfig"
+          }
+        }
+      }
+    },
+    "firestarterDeleteConfigRequest": {
+      "type": "object",
+      "properties": {
+        "CallbackID": {
+          "type": "string"
+        }
+      }
+    },
+    "firestarterDeleteConfigResponse": {
+      "type": "object"
+    },
+    "firestarterGetChannelsRequest": {
+      "type": "object"
+    },
+    "firestarterGetConfigListRequest": {
+      "type": "object"
+    },
+    "firestarterSetConfigResponse": {
+      "type": "object"
+    }
+  }
+}

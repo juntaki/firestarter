@@ -83,6 +83,7 @@ func main() {
 	}, nil)
 	adminRouter.Mount("/twirp/", apiHandler)
 	adminRouter.Mount("/", http.FileServer(http.Dir("admin/dist")))
+	adminRouter.Mount("/swagger-ui/", http.StripPrefix("/swagger-ui/", http.FileServer(http.Dir("swagger-ui"))))
 
 	eg := errgroup.Group{}
 	// start RTM event checker
