@@ -19,7 +19,7 @@ func (a *AdminAPI) GetConfig(ctx context.Context, request *proto.GetConfigReques
 }
 
 func (a *AdminAPI) GetConfigList(ctx context.Context, request *proto.GetConfigListRequest) (*proto.ConfigList, error) {
-	config, err := a.ConfigRepository.GetConfig()
+	config, err := a.ConfigRepository.GetConfigList()
 	if err != nil {
 		return &proto.ConfigList{}, err
 	}

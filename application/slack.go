@@ -84,7 +84,7 @@ func (s *SlackBot) InteractiveMessageHandler(w http.ResponseWriter, r *http.Requ
 	}
 
 	// Load config
-	config, err := s.ConfigRepository.GetConfig()
+	config, err := s.ConfigRepository.GetConfigList()
 	if err != nil {
 		s.Log.Error("Get config map failed")
 		w.WriteHeader(http.StatusInternalServerError)
@@ -335,7 +335,7 @@ func (s *SlackBot) Run() error {
 					break
 				}
 				// Get config on each event, it may be updated.
-				config, err := s.ConfigRepository.GetConfig()
+				config, err := s.ConfigRepository.GetConfigList()
 				if err != nil {
 					return err
 				}

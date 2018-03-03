@@ -40,7 +40,7 @@ func NewConfigRepositoryImpl() *ConfigRepositoryImpl {
 	}
 }
 
-func (c *ConfigRepositoryImpl) GetConfig() (domain.ConfigMap, error) {
+func (c *ConfigRepositoryImpl) GetConfigList() (domain.ConfigMap, error) {
 	if !c.loaded {
 		c.mutex.Lock()
 		bytes, err := ioutil.ReadFile(configFile)
@@ -92,7 +92,7 @@ func (c *ConfigRepositoryImpl) saveConfig() error {
 
 func (c *ConfigRepositoryImpl) loadConfigIfNeeded() error {
 	if !c.loaded {
-		if _, err := c.GetConfig(); err != nil {
+		if _, err := c.GetConfigList(); err != nil {
 			return errors.Wrap(err, "Load config")
 		}
 	}
@@ -124,7 +124,7 @@ func (c *ConfigRepositoryImpl) SetConfig(config *domain.Config) error {
 }
 
 func (c *ConfigRepositoryImpl) IsExist(ID string) (bool, error) {
-	config, err := c.GetConfig()
+	config, err := c.GetConfigList()
 	if err != nil {
 		return false, err
 	}
