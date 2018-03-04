@@ -95,6 +95,7 @@
     },
     "/twirp/firestarter.ConfigService/GetConfigList": {
       "post": {
+        "summary": "rpc DumpConfigList(DumpConfigListRequest) returns (ConfigList) {}\nrpc RestoreConfigList(RestoreConfigListRequest) returns (RestoreConfigListResponse) {}",
         "operationId": "GetConfigList",
         "responses": {
           "200": {
@@ -192,6 +193,12 @@
         "Actions": {
           "type": "array",
           "items": {
+            "type": "string"
+          }
+        },
+        "Secrets": {
+          "type": "object",
+          "additionalProperties": {
             "type": "string"
           }
         }

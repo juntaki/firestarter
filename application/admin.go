@@ -88,6 +88,7 @@ func (a *AdminAPI) pbConfigToConfig(pbconfig *proto.Config) *domain.Config {
 		URLTemplateString:  pbconfig.URLTemplate,
 		BodyTemplateString: pbconfig.BodyTemplate,
 		Confirm:            pbconfig.Confirm,
+		Secrets:            pbconfig.Secrets,
 	}
 }
 
@@ -102,5 +103,6 @@ func (a *AdminAPI) configToPbConfig(config *domain.Config) *proto.Config {
 		URLTemplate:  config.URLTemplateString,
 		BodyTemplate: config.BodyTemplateString,
 		Confirm:      config.Confirm,
+		Secrets:      config.Secrets,
 	}
 }

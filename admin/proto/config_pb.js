@@ -14,9 +14,12 @@ goog.exportSymbol('proto.firestarter.Config', null, global);
 goog.exportSymbol('proto.firestarter.ConfigList', null, global);
 goog.exportSymbol('proto.firestarter.DeleteConfigRequest', null, global);
 goog.exportSymbol('proto.firestarter.DeleteConfigResponse', null, global);
+goog.exportSymbol('proto.firestarter.DumpConfigListRequest', null, global);
 goog.exportSymbol('proto.firestarter.GetChannelsRequest', null, global);
 goog.exportSymbol('proto.firestarter.GetConfigListRequest', null, global);
 goog.exportSymbol('proto.firestarter.GetConfigRequest', null, global);
+goog.exportSymbol('proto.firestarter.RestoreConfigListRequest', null, global);
+goog.exportSymbol('proto.firestarter.RestoreConfigListResponse', null, global);
 goog.exportSymbol('proto.firestarter.SetConfigResponse', null, global);
 
 /**
@@ -746,6 +749,501 @@ proto.firestarter.DeleteConfigResponse.prototype.cloneMessage = function() {
  * @extends {jspb.Message}
  * @constructor
  */
+proto.firestarter.DumpConfigListRequest = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.firestarter.DumpConfigListRequest, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  proto.firestarter.DumpConfigListRequest.displayName = 'proto.firestarter.DumpConfigListRequest';
+}
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto suitable for use in Soy templates.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+ * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+ *     for transitional soy proto support: http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.firestarter.DumpConfigListRequest.prototype.toObject = function(opt_includeInstance) {
+  return proto.firestarter.DumpConfigListRequest.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Whether to include the JSPB
+ *     instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.firestarter.DumpConfigListRequest} msg The msg instance to transform.
+ * @return {!Object}
+ */
+proto.firestarter.DumpConfigListRequest.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    password: msg.getPassword()
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.firestarter.DumpConfigListRequest}
+ */
+proto.firestarter.DumpConfigListRequest.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.firestarter.DumpConfigListRequest;
+  return proto.firestarter.DumpConfigListRequest.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.firestarter.DumpConfigListRequest} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.firestarter.DumpConfigListRequest}
+ */
+proto.firestarter.DumpConfigListRequest.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setPassword(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Class method variant: serializes the given message to binary data
+ * (in protobuf wire format), writing to the given BinaryWriter.
+ * @param {!proto.firestarter.DumpConfigListRequest} message
+ * @param {!jspb.BinaryWriter} writer
+ */
+proto.firestarter.DumpConfigListRequest.serializeBinaryToWriter = function(message, writer) {
+  message.serializeBinaryToWriter(writer);
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.firestarter.DumpConfigListRequest.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  this.serializeBinaryToWriter(writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format),
+ * writing to the given BinaryWriter.
+ * @param {!jspb.BinaryWriter} writer
+ */
+proto.firestarter.DumpConfigListRequest.prototype.serializeBinaryToWriter = function (writer) {
+  var f = undefined;
+  f = this.getPassword();
+  if (f.length > 0) {
+    writer.writeString(
+      1,
+      f
+    );
+  }
+};
+
+
+/**
+ * Creates a deep clone of this proto. No data is shared with the original.
+ * @return {!proto.firestarter.DumpConfigListRequest} The clone.
+ */
+proto.firestarter.DumpConfigListRequest.prototype.cloneMessage = function() {
+  return /** @type {!proto.firestarter.DumpConfigListRequest} */ (jspb.Message.cloneMessage(this));
+};
+
+
+/**
+ * optional string password = 1;
+ * @return {string}
+ */
+proto.firestarter.DumpConfigListRequest.prototype.getPassword = function() {
+  return /** @type {string} */ (jspb.Message.getFieldProto3(this, 1, ""));
+};
+
+
+/** @param {string} value  */
+proto.firestarter.DumpConfigListRequest.prototype.setPassword = function(value) {
+  jspb.Message.setField(this, 1, value);
+};
+
+
+
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.firestarter.RestoreConfigListRequest = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.firestarter.RestoreConfigListRequest, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  proto.firestarter.RestoreConfigListRequest.displayName = 'proto.firestarter.RestoreConfigListRequest';
+}
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto suitable for use in Soy templates.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+ * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+ *     for transitional soy proto support: http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.firestarter.RestoreConfigListRequest.prototype.toObject = function(opt_includeInstance) {
+  return proto.firestarter.RestoreConfigListRequest.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Whether to include the JSPB
+ *     instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.firestarter.RestoreConfigListRequest} msg The msg instance to transform.
+ * @return {!Object}
+ */
+proto.firestarter.RestoreConfigListRequest.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    password: msg.getPassword(),
+    configlist: (f = msg.getConfiglist()) && proto.firestarter.ConfigList.toObject(includeInstance, f)
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.firestarter.RestoreConfigListRequest}
+ */
+proto.firestarter.RestoreConfigListRequest.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.firestarter.RestoreConfigListRequest;
+  return proto.firestarter.RestoreConfigListRequest.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.firestarter.RestoreConfigListRequest} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.firestarter.RestoreConfigListRequest}
+ */
+proto.firestarter.RestoreConfigListRequest.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setPassword(value);
+      break;
+    case 2:
+      var value = new proto.firestarter.ConfigList;
+      reader.readMessage(value,proto.firestarter.ConfigList.deserializeBinaryFromReader);
+      msg.setConfiglist(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Class method variant: serializes the given message to binary data
+ * (in protobuf wire format), writing to the given BinaryWriter.
+ * @param {!proto.firestarter.RestoreConfigListRequest} message
+ * @param {!jspb.BinaryWriter} writer
+ */
+proto.firestarter.RestoreConfigListRequest.serializeBinaryToWriter = function(message, writer) {
+  message.serializeBinaryToWriter(writer);
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.firestarter.RestoreConfigListRequest.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  this.serializeBinaryToWriter(writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format),
+ * writing to the given BinaryWriter.
+ * @param {!jspb.BinaryWriter} writer
+ */
+proto.firestarter.RestoreConfigListRequest.prototype.serializeBinaryToWriter = function (writer) {
+  var f = undefined;
+  f = this.getPassword();
+  if (f.length > 0) {
+    writer.writeString(
+      1,
+      f
+    );
+  }
+  f = this.getConfiglist();
+  if (f != null) {
+    writer.writeMessage(
+      2,
+      f,
+      proto.firestarter.ConfigList.serializeBinaryToWriter
+    );
+  }
+};
+
+
+/**
+ * Creates a deep clone of this proto. No data is shared with the original.
+ * @return {!proto.firestarter.RestoreConfigListRequest} The clone.
+ */
+proto.firestarter.RestoreConfigListRequest.prototype.cloneMessage = function() {
+  return /** @type {!proto.firestarter.RestoreConfigListRequest} */ (jspb.Message.cloneMessage(this));
+};
+
+
+/**
+ * optional string password = 1;
+ * @return {string}
+ */
+proto.firestarter.RestoreConfigListRequest.prototype.getPassword = function() {
+  return /** @type {string} */ (jspb.Message.getFieldProto3(this, 1, ""));
+};
+
+
+/** @param {string} value  */
+proto.firestarter.RestoreConfigListRequest.prototype.setPassword = function(value) {
+  jspb.Message.setField(this, 1, value);
+};
+
+
+/**
+ * optional ConfigList configList = 2;
+ * @return {proto.firestarter.ConfigList}
+ */
+proto.firestarter.RestoreConfigListRequest.prototype.getConfiglist = function() {
+  return /** @type{proto.firestarter.ConfigList} */ (
+    jspb.Message.getWrapperField(this, proto.firestarter.ConfigList, 2));
+};
+
+
+/** @param {proto.firestarter.ConfigList|undefined} value  */
+proto.firestarter.RestoreConfigListRequest.prototype.setConfiglist = function(value) {
+  jspb.Message.setWrapperField(this, 2, value);
+};
+
+
+proto.firestarter.RestoreConfigListRequest.prototype.clearConfiglist = function() {
+  this.setConfiglist(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return{!boolean}
+ */
+proto.firestarter.RestoreConfigListRequest.prototype.hasConfiglist = function() {
+  return jspb.Message.getField(this, 2) != null;
+};
+
+
+
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.firestarter.RestoreConfigListResponse = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.firestarter.RestoreConfigListResponse, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  proto.firestarter.RestoreConfigListResponse.displayName = 'proto.firestarter.RestoreConfigListResponse';
+}
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto suitable for use in Soy templates.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+ * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+ *     for transitional soy proto support: http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.firestarter.RestoreConfigListResponse.prototype.toObject = function(opt_includeInstance) {
+  return proto.firestarter.RestoreConfigListResponse.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Whether to include the JSPB
+ *     instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.firestarter.RestoreConfigListResponse} msg The msg instance to transform.
+ * @return {!Object}
+ */
+proto.firestarter.RestoreConfigListResponse.toObject = function(includeInstance, msg) {
+  var f, obj = {
+
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.firestarter.RestoreConfigListResponse}
+ */
+proto.firestarter.RestoreConfigListResponse.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.firestarter.RestoreConfigListResponse;
+  return proto.firestarter.RestoreConfigListResponse.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.firestarter.RestoreConfigListResponse} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.firestarter.RestoreConfigListResponse}
+ */
+proto.firestarter.RestoreConfigListResponse.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Class method variant: serializes the given message to binary data
+ * (in protobuf wire format), writing to the given BinaryWriter.
+ * @param {!proto.firestarter.RestoreConfigListResponse} message
+ * @param {!jspb.BinaryWriter} writer
+ */
+proto.firestarter.RestoreConfigListResponse.serializeBinaryToWriter = function(message, writer) {
+  message.serializeBinaryToWriter(writer);
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.firestarter.RestoreConfigListResponse.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  this.serializeBinaryToWriter(writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format),
+ * writing to the given BinaryWriter.
+ * @param {!jspb.BinaryWriter} writer
+ */
+proto.firestarter.RestoreConfigListResponse.prototype.serializeBinaryToWriter = function (writer) {
+  var f = undefined;
+};
+
+
+/**
+ * Creates a deep clone of this proto. No data is shared with the original.
+ * @return {!proto.firestarter.RestoreConfigListResponse} The clone.
+ */
+proto.firestarter.RestoreConfigListResponse.prototype.cloneMessage = function() {
+  return /** @type {!proto.firestarter.RestoreConfigListResponse} */ (jspb.Message.cloneMessage(this));
+};
+
+
+
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
 proto.firestarter.Config = function(opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, proto.firestarter.Config.repeatedFields_, null);
 };
@@ -796,7 +1294,8 @@ proto.firestarter.Config.toObject = function(includeInstance, msg) {
     urltemplate: msg.getUrltemplate(),
     bodytemplate: msg.getBodytemplate(),
     confirm: msg.getConfirm(),
-    actionsList: jspb.Message.getField(msg, 9)
+    actionsList: jspb.Message.getField(msg, 9),
+    secretsMap: (f = msg.getSecretsMap(true)) ? f.toArray() : []
   };
 
   if (includeInstance) {
@@ -870,6 +1369,12 @@ proto.firestarter.Config.deserializeBinaryFromReader = function(msg, reader) {
       var value = /** @type {string} */ (reader.readString());
       msg.getActionsList().push(value);
       msg.setActionsList(msg.getActionsList());
+      break;
+    case 10:
+      var value = msg.getSecretsMap();
+      reader.readMessage(value, function(message, reader) {
+        jspb.Map.deserializeBinary(message, reader, jspb.BinaryReader.prototype.readString, jspb.BinaryReader.prototype.readString);
+         });
       break;
     default:
       reader.skipField();
@@ -971,6 +1476,10 @@ proto.firestarter.Config.prototype.serializeBinaryToWriter = function (writer) {
       9,
       f
     );
+  }
+  f = this.getSecretsMap(true);
+  if (f && f.getLength() > 0) {
+    f.serializeBinary(10, writer, jspb.BinaryWriter.prototype.writeString, jspb.BinaryWriter.prototype.writeString);
   }
 };
 
@@ -1132,6 +1641,19 @@ proto.firestarter.Config.prototype.setActionsList = function(value) {
 
 proto.firestarter.Config.prototype.clearActionsList = function() {
   jspb.Message.setField(this, 9, []);
+};
+
+
+/**
+ * map<string, string> Secrets = 10;
+ * @param {boolean=} opt_noLazyCreate Do not create the map if
+ * empty, instead returning `undefined`
+ * @return {!jspb.Map<string,string>}
+ */
+proto.firestarter.Config.prototype.getSecretsMap = function(opt_noLazyCreate) {
+  return /** @type {!jspb.Map<string,string>} */ (
+      jspb.Message.getMapField(this, 10, opt_noLazyCreate,
+      null));
 };
 
 

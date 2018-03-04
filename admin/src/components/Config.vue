@@ -11,6 +11,9 @@
       <el-form-item label="Title" prop="title" :rules="[{ required: true, message: 'Please input title', trigger: 'change' }]">
         <el-input v-model="form.title" placeholder="Deploy bot for my team"></el-input>
       </el-form-item>
+
+      <h3>Trigger</h3>
+
       <el-form-item label="Channels" prop="channelsList"
         :rules="[{ required: true, message: 'Please input channels', trigger: 'change' }]">
         <el-select v-model="form.channelsList" placeholder="general random"
@@ -22,6 +25,8 @@
       :rules="[{ required: true, message: 'Please input Regexp', trigger: 'change' }]">
         <el-input v-model="form.regexp" placeholder="^depoy (.*)$"></el-input>
       </el-form-item>
+
+      <h3>Bot message</h3>
 
       <el-form-item label="Text" prop="text"
       :rules="[{ required: true, message: 'Please input Text', trigger: 'change' }]">
@@ -37,12 +42,32 @@
         <el-switch v-model="form.confirm"></el-switch>
       </el-form-item>
 
+      <h3>POST Request</h3>
+
       <el-form-item label="URL Template" prop="urltemplate"
       :rules="[{ required: true, message: 'Please input URL Template', trigger: 'change' }]">
-        <el-input v-model="form.urltemplate" placeholder="https://example.com/deploy?param={{index .matched 1}}&value={{value}}"></el-input>
+        <el-input v-model="form.urltemplate" :placeholder="urlTemplatePlaceholder"></el-input>
       </el-form-item>
       <el-form-item label="Body Template">
-        <el-input v-model="form.bodytemplate" placeholder="{ value: '{{value}}' }"></el-input>
+        <el-input v-model="form.bodytemplate" :placeholder="bodyTemplatePlaceholder"></el-input>
+      </el-form-item>
+
+      <h3>Secrets</h3>
+
+      <el-form-item
+        v-for="(secret, index) in secrets"
+        :label="'Secret (' + index + ')'"
+        :key="secret.key"
+        prop="secrets"
+      >
+        <el-row>
+          <el-col :span="10"><el-input v-model="secret.secretKey" placeholder="AWS_TOKEN"></el-input></el-col>
+          <el-col :span="10"><el-input v-model="secret.secretValue" placeholder="AKIAXXXXX"></el-input></el-col>
+          <el-col :span="4"><el-button @click.prevent="removeSecret(secret)" style="width: 100%">Delete</el-button></el-col>
+        </el-row>
+      </el-form-item>
+      <el-form-item>
+        <el-button @click="addSecret">New secret</el-button>
       </el-form-item>
 
       <div><el-button type="primary" style="width: 100%" @click="onSubmit()">Submit</el-button></div>
@@ -67,13 +92,45 @@ export default {
   data () {
     const form = this.config
       ? JSON.parse(JSON.stringify(this.config))
-      : { id: null }
+      : {
+        id: null,
+        secrets: new Map()
+      }
+
+    const secrets = []
+    form.secrets.forEach((v, k, m) => {
+      secrets.push({
+        key: secrets.length,
+        secretKey: k,
+        secretValue: v
+      })
+    })
+
     const host = location.protocol + '//' + location.host
     return {
       client: config.createConfigServiceClient(host),
       showDialog: false,
       showDeleteDialog: false,
-      form: form
+      form: form,
+      secrets: secrets,
+      urlTemplatePlaceholder: 'https://example.com/deploy?param={{index .matched 1}}&value={{value}}',
+      bodyTemplatePlaceholder: "{ value: '{{value}}' }"
+    }
+  },
+  watch: {
+    secrets: {
+      handler: function (newValue, oldValue) {
+        const newSecret = new Map()
+
+        newValue.forEach((v, i, a) => {
+          newSecret.set(v.secretKey, v.secretValue)
+        })
+
+        this.form.secrets = newSecret
+
+        console.log(this.form.secrets)
+      },
+      deep: true
     }
   },
   computed: {
@@ -86,6 +143,19 @@ export default {
     }
   },
   methods: {
+    removeSecret (item) {
+      var index = this.secrets.indexOf(item)
+      if (index !== -1) {
+        this.secrets.splice(index, 1)
+      }
+    },
+    addSecret () {
+      this.secrets.push({
+        key: Date.now(),
+        secretKey: '',
+        secretValue: ''
+      })
+    },
     onSubmit () {
       this.$refs['form'].validate(valid => {
         if (valid) this.update()

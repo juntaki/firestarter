@@ -8,6 +8,8 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
+var SercretValueCover = "<Secret value cannot be changed, delete and create are required>"
+
 type ConfigRepository interface {
 	GetConfigList() (ConfigMap, error)
 	GetConfig(ID string) (*Config, error)
@@ -44,6 +46,7 @@ type Config struct {
 	URLTemplateString  string `validate:"required"`
 	BodyTemplateString string
 	Type               string
+	Secrets            map[string]string
 
 	Regexp       *regexp.Regexp
 	URLTemplate  *template.Template

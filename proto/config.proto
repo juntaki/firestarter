@@ -19,6 +19,18 @@ message DeleteConfigRequest {
 message DeleteConfigResponse {
 }
 
+message DumpConfigListRequest {
+  string password = 1;
+}
+
+message RestoreConfigListRequest {
+  string password = 1;
+  ConfigList configList = 2;
+}
+
+message RestoreConfigListResponse {
+}
+
 message Config {
   string Title = 1;
   string CallbackID = 2;
@@ -29,6 +41,7 @@ message Config {
   string BodyTemplate = 7;
   bool Confirm = 8;
   repeated string Actions = 9;
+  map<string, string> Secrets = 10;
 }
 
 message ConfigList {
@@ -43,6 +56,8 @@ message GetChannelsRequest {
 }
 
 service ConfigService {
+  // rpc DumpConfigList(DumpConfigListRequest) returns (ConfigList) {}
+  // rpc RestoreConfigList(RestoreConfigListRequest) returns (RestoreConfigListResponse) {}
   rpc GetConfigList(GetConfigListRequest) returns (ConfigList) {}
   rpc GetConfig(GetConfigRequest) returns (Config) {}
   rpc SetConfig(Config) returns (SetConfigResponse) {}

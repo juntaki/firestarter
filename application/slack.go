@@ -271,11 +271,11 @@ func (s *SlackBot) ProcessInteractiveRequest(c *domain.Config, sess *SessionValu
 func (s *SlackBot) SendRequest(c *domain.Config, sess *SessionValue) error {
 	urlBuf := new(bytes.Buffer)
 	bodyBuf := new(bytes.Buffer)
-	err := c.URLTemplate.Execute(urlBuf, map[string]interface{}{"value": sess.value, "matched": sess.matched})
+	err := c.URLTemplate.Execute(urlBuf, map[string]interface{}{"value": sess.value, "matched": sess.matched, "secrets": c.Secrets})
 	if err != nil {
 		return errors.Wrap(err, "URL template failed")
 	}
-	err = c.BodyTemplate.Execute(bodyBuf, map[string]interface{}{"value": sess.value, "matched": sess.matched})
+	err = c.BodyTemplate.Execute(bodyBuf, map[string]interface{}{"value": sess.value, "matched": sess.matched, "secrets": c.Secrets})
 	if err != nil {
 		return errors.Wrap(err, "Body template failed")
 	}

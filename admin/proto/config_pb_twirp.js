@@ -13,6 +13,10 @@ var pb = require("./config_pb.js");
 module.exports.createConfigServiceClient = function(baseurl, extraHeaders, useJSON) {
     var rpc = createClient(baseurl, "firestarter.ConfigService", "v5.0.0",  useJSON, extraHeaders === undefined ? {} : extraHeaders);
     return {
+        /**
+         * rpc DumpConfigList(DumpConfigListRequest) returns (ConfigList) {}
+         * rpc RestoreConfigList(RestoreConfigListRequest) returns (RestoreConfigListResponse) {}
+         */
         getConfigList: function(data) { return rpc("GetConfigList", rpc.buildMessage(pb.GetConfigListRequest, data), pb.ConfigList); },
         getConfig: function(data) { return rpc("GetConfig", rpc.buildMessage(pb.GetConfigRequest, data), pb.Config); },
         setConfig: function(data) { return rpc("SetConfig", rpc.buildMessage(pb.Config, data), pb.SetConfigResponse); },
