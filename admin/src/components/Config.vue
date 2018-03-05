@@ -124,13 +124,12 @@ export default {
     secrets: {
       handler: function (newValue, oldValue) {
         const newSecret = []
-        /*         newValue.forEach((v, i, a) => {
-          const s = new pb.Secret()
-          s.setKey(v.secretKey)
-          s.setValue(v.secretValue)
-          newSecret.push(s)
+        newValue.forEach((v, i, a) => {
+          newSecret.push({
+            secret: v.secretKey,
+            value: v.secretValue})
         })
- */ this.form.secretsList = newSecret
+        this.form.secretsList = newSecret
       },
       deep: true
     }
