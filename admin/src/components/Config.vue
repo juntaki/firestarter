@@ -61,8 +61,8 @@
         prop="secrets"
       >
         <el-row>
-          <el-col :span="10"><el-input v-model="secret.secretKey" placeholder="AWS_TOKEN"></el-input></el-col>
-          <el-col :span="10"><el-input v-model="secret.secretValue" placeholder="AKIAXXXXX"></el-input></el-col>
+          <el-col :span="10"><el-input v-model="secret.secretKey" placeholder="AWS_TOKEN" :disabled="secret.disabled"></el-input></el-col>
+          <el-col :span="10"><el-input v-model="secret.secretValue" placeholder="AKIAXXXXX" :disabled="secret.disabled"></el-input></el-col>
           <el-col :span="4"><el-button @click.prevent="removeSecret(secret)" style="width: 100%">Delete</el-button></el-col>
         </el-row>
       </el-form-item>
@@ -94,17 +94,20 @@ export default {
       ? JSON.parse(JSON.stringify(this.config))
       : {
         id: null,
-        secrets: new Map()
+        secrets: []
       }
 
     const secrets = []
-    form.secrets.forEach((v, k, m) => {
-      secrets.push({
-        key: secrets.length,
-        secretKey: k,
-        secretValue: v
+    if (form.secretsMap) {
+      form.secretsMap.forEach((secret) => {
+        secrets.push({
+          key: secrets.length,
+          disabled: true,
+          secretKey: secret[0],
+          secretValue: secret[1]
+        })
       })
-    })
+    }
 
     const host = location.protocol + '//' + location.host
     return {
@@ -120,15 +123,11 @@ export default {
   watch: {
     secrets: {
       handler: function (newValue, oldValue) {
-        const newSecret = new Map()
-
+        const newSecret = []
         newValue.forEach((v, i, a) => {
-          newSecret.set(v.secretKey, v.secretValue)
+          newSecret.push([v.secretKey, v.secretValue])
         })
-
-        this.form.secrets = newSecret
-
-        console.log(this.form.secrets)
+        this.form.secretsMap = newSecret
       },
       deep: true
     }
@@ -152,6 +151,7 @@ export default {
     addSecret () {
       this.secrets.push({
         key: Date.now(),
+        disabled: false,
         secretKey: '',
         secretValue: ''
       })

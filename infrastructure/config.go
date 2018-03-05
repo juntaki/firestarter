@@ -71,7 +71,7 @@ func (c *ConfigRepositoryImpl) GetConfigList() (domain.ConfigMap, error) {
 	defer c.mutex.RUnlock()
 	ret := domain.ConfigMap{}
 	for _, config := range c.currentConfig {
-		ret[config.CallbackID] = c.saveConfigToConfig(config, true)
+		ret[config.CallbackID] = c.saveConfigToConfig(config)
 	}
 
 	return ret, nil
@@ -164,7 +164,7 @@ func (c *ConfigRepositoryImpl) DeleteConfig(ID string) error {
 }
 
 // Mapper
-func (c *ConfigRepositoryImpl) saveConfigToConfig(saveconfig *SaveConfig, hideSecrets bool) *domain.Config {
+func (c *ConfigRepositoryImpl) saveConfigToConfig(saveconfig *SaveConfig) *domain.Config {
 	config := &domain.Config{
 		Title:              saveconfig.Title,
 		CallbackID:         saveconfig.CallbackID,
@@ -175,16 +175,9 @@ func (c *ConfigRepositoryImpl) saveConfigToConfig(saveconfig *SaveConfig, hideSe
 		URLTemplateString:  saveconfig.URLTemplateString,
 		BodyTemplateString: saveconfig.BodyTemplateString,
 		Confirm:            saveconfig.Confirm,
-		Secrets:            make(map[string]string),
+		Secrets:            saveconfig.Secrets,
 	}
 
-	if hideSecrets {
-		for k, _ := range saveconfig.Secrets {
-			config.Secrets[k] = domain.SercretValueCover
-		}
-	} else {
-		config.Secrets = saveconfig.Secrets
-	}
 	config.Hydrate()
 	return config
 }

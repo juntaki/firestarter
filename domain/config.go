@@ -8,7 +8,7 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
-var SercretValueCover = "<Secret value cannot be changed, delete and create are required>"
+var SercretValueMask = "<Secret value>"
 
 type ConfigRepository interface {
 	GetConfigList() (ConfigMap, error)
@@ -89,4 +89,10 @@ func (c *Config) Hydrate() {
 	c.URLTemplate =
 		template.Must(template.New(c.CallbackID + "url").Parse(c.URLTemplateString))
 	c.Regexp = regexp.MustCompile(c.RegexpString)
+}
+
+func (c *Config) Mask() {
+	for k := range c.Secrets {
+		c.Secrets[k] = SercretValueMask
+	}
 }
