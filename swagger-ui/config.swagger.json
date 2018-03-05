@@ -197,9 +197,9 @@
           }
         },
         "Secrets": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/firestarterSecret"
           }
         }
       }
@@ -236,6 +236,17 @@
       "type": "object",
       "properties": {
         "CallbackID": {
+          "type": "string"
+        }
+      }
+    },
+    "firestarterSecret": {
+      "type": "object",
+      "properties": {
+        "Key": {
+          "type": "string"
+        },
+        "Value": {
           "type": "string"
         }
       }

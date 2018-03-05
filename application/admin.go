@@ -83,7 +83,7 @@ func (a *AdminAPI) GetChannels(ctx context.Context, req *proto.GetChannelsReques
 
 // Mapper
 func (a *AdminAPI) pbConfigToConfig(pbconfig *proto.Config) *domain.Config {
-	return &domain.Config{
+	config := &domain.Config{
 		Title:              pbconfig.Title,
 		CallbackID:         pbconfig.CallbackID,
 		Channels:           pbconfig.Channels,
@@ -93,12 +93,18 @@ func (a *AdminAPI) pbConfigToConfig(pbconfig *proto.Config) *domain.Config {
 		URLTemplateString:  pbconfig.URLTemplate,
 		BodyTemplateString: pbconfig.BodyTemplate,
 		Confirm:            pbconfig.Confirm,
-		Secrets:            pbconfig.Secrets,
+		Secrets:            make(map[string]string),
 	}
+
+	for _, s := range pbconfig.Secrets {
+		config.Secrets[s.Key] = s.Value
+	}
+
+	return config
 }
 
 func (a *AdminAPI) configToPbConfig(config *domain.Config) *proto.Config {
-	return &proto.Config{
+	pbconfig := &proto.Config{
 		Title:        config.Title,
 		CallbackID:   config.CallbackID,
 		Channels:     config.Channels,
@@ -108,6 +114,11 @@ func (a *AdminAPI) configToPbConfig(config *domain.Config) *proto.Config {
 		URLTemplate:  config.URLTemplateString,
 		BodyTemplate: config.BodyTemplateString,
 		Confirm:      config.Confirm,
-		Secrets:      config.Secrets,
+		Secrets:      make([]*proto.Secret, 0),
 	}
+
+	for k, v := range config.Secrets {
+		pbconfig.Secrets = append(pbconfig.Secrets, &proto.Secret{Key: k, Value: v})
+	}
+	return pbconfig
 }

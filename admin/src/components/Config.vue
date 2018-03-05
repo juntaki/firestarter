@@ -98,13 +98,13 @@ export default {
       }
 
     const secrets = []
-    if (form.secretsMap) {
-      form.secretsMap.forEach((secret) => {
+    if (form.secretsList) {
+      form.secretsList.forEach((secret) => {
         secrets.push({
           key: secrets.length,
           disabled: true,
-          secretKey: secret[0],
-          secretValue: secret[1]
+          secretKey: secret.key,
+          secretValue: secret.value
         })
       })
     }
@@ -124,10 +124,13 @@ export default {
     secrets: {
       handler: function (newValue, oldValue) {
         const newSecret = []
-        newValue.forEach((v, i, a) => {
-          newSecret.push([v.secretKey, v.secretValue])
+        /*         newValue.forEach((v, i, a) => {
+          const s = new pb.Secret()
+          s.setKey(v.secretKey)
+          s.setValue(v.secretValue)
+          newSecret.push(s)
         })
-        this.form.secretsMap = newSecret
+ */ this.form.secretsList = newSecret
       },
       deep: true
     }

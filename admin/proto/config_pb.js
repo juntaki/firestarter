@@ -20,6 +20,7 @@ goog.exportSymbol('proto.firestarter.GetConfigListRequest', null, global);
 goog.exportSymbol('proto.firestarter.GetConfigRequest', null, global);
 goog.exportSymbol('proto.firestarter.RestoreConfigListRequest', null, global);
 goog.exportSymbol('proto.firestarter.RestoreConfigListResponse', null, global);
+goog.exportSymbol('proto.firestarter.Secret', null, global);
 goog.exportSymbol('proto.firestarter.SetConfigResponse', null, global);
 
 /**
@@ -1244,6 +1245,192 @@ proto.firestarter.RestoreConfigListResponse.prototype.cloneMessage = function() 
  * @extends {jspb.Message}
  * @constructor
  */
+proto.firestarter.Secret = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.firestarter.Secret, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  proto.firestarter.Secret.displayName = 'proto.firestarter.Secret';
+}
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto suitable for use in Soy templates.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+ * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+ *     for transitional soy proto support: http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.firestarter.Secret.prototype.toObject = function(opt_includeInstance) {
+  return proto.firestarter.Secret.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Whether to include the JSPB
+ *     instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.firestarter.Secret} msg The msg instance to transform.
+ * @return {!Object}
+ */
+proto.firestarter.Secret.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    key: msg.getKey(),
+    value: msg.getValue()
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.firestarter.Secret}
+ */
+proto.firestarter.Secret.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.firestarter.Secret;
+  return proto.firestarter.Secret.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.firestarter.Secret} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.firestarter.Secret}
+ */
+proto.firestarter.Secret.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setKey(value);
+      break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setValue(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Class method variant: serializes the given message to binary data
+ * (in protobuf wire format), writing to the given BinaryWriter.
+ * @param {!proto.firestarter.Secret} message
+ * @param {!jspb.BinaryWriter} writer
+ */
+proto.firestarter.Secret.serializeBinaryToWriter = function(message, writer) {
+  message.serializeBinaryToWriter(writer);
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.firestarter.Secret.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  this.serializeBinaryToWriter(writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format),
+ * writing to the given BinaryWriter.
+ * @param {!jspb.BinaryWriter} writer
+ */
+proto.firestarter.Secret.prototype.serializeBinaryToWriter = function (writer) {
+  var f = undefined;
+  f = this.getKey();
+  if (f.length > 0) {
+    writer.writeString(
+      1,
+      f
+    );
+  }
+  f = this.getValue();
+  if (f.length > 0) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
+};
+
+
+/**
+ * Creates a deep clone of this proto. No data is shared with the original.
+ * @return {!proto.firestarter.Secret} The clone.
+ */
+proto.firestarter.Secret.prototype.cloneMessage = function() {
+  return /** @type {!proto.firestarter.Secret} */ (jspb.Message.cloneMessage(this));
+};
+
+
+/**
+ * optional string Key = 1;
+ * @return {string}
+ */
+proto.firestarter.Secret.prototype.getKey = function() {
+  return /** @type {string} */ (jspb.Message.getFieldProto3(this, 1, ""));
+};
+
+
+/** @param {string} value  */
+proto.firestarter.Secret.prototype.setKey = function(value) {
+  jspb.Message.setField(this, 1, value);
+};
+
+
+/**
+ * optional string Value = 2;
+ * @return {string}
+ */
+proto.firestarter.Secret.prototype.getValue = function() {
+  return /** @type {string} */ (jspb.Message.getFieldProto3(this, 2, ""));
+};
+
+
+/** @param {string} value  */
+proto.firestarter.Secret.prototype.setValue = function(value) {
+  jspb.Message.setField(this, 2, value);
+};
+
+
+
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
 proto.firestarter.Config = function(opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, proto.firestarter.Config.repeatedFields_, null);
 };
@@ -1256,7 +1443,7 @@ if (goog.DEBUG && !COMPILED) {
  * @private {!Array<number>}
  * @const
  */
-proto.firestarter.Config.repeatedFields_ = [3,9];
+proto.firestarter.Config.repeatedFields_ = [3,9,10];
 
 
 
@@ -1295,7 +1482,8 @@ proto.firestarter.Config.toObject = function(includeInstance, msg) {
     bodytemplate: msg.getBodytemplate(),
     confirm: msg.getConfirm(),
     actionsList: jspb.Message.getField(msg, 9),
-    secretsMap: (f = msg.getSecretsMap(true)) ? f.toArray() : []
+    secretsList: jspb.Message.toObjectList(msg.getSecretsList(),
+    proto.firestarter.Secret.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -1371,10 +1559,10 @@ proto.firestarter.Config.deserializeBinaryFromReader = function(msg, reader) {
       msg.setActionsList(msg.getActionsList());
       break;
     case 10:
-      var value = msg.getSecretsMap();
-      reader.readMessage(value, function(message, reader) {
-        jspb.Map.deserializeBinary(message, reader, jspb.BinaryReader.prototype.readString, jspb.BinaryReader.prototype.readString);
-         });
+      var value = new proto.firestarter.Secret;
+      reader.readMessage(value,proto.firestarter.Secret.deserializeBinaryFromReader);
+      msg.getSecretsList().push(value);
+      msg.setSecretsList(msg.getSecretsList());
       break;
     default:
       reader.skipField();
@@ -1477,9 +1665,13 @@ proto.firestarter.Config.prototype.serializeBinaryToWriter = function (writer) {
       f
     );
   }
-  f = this.getSecretsMap(true);
-  if (f && f.getLength() > 0) {
-    f.serializeBinary(10, writer, jspb.BinaryWriter.prototype.writeString, jspb.BinaryWriter.prototype.writeString);
+  f = this.getSecretsList();
+  if (f.length > 0) {
+    writer.writeRepeatedMessage(
+      10,
+      f,
+      proto.firestarter.Secret.serializeBinaryToWriter
+    );
   }
 };
 
@@ -1645,15 +1837,25 @@ proto.firestarter.Config.prototype.clearActionsList = function() {
 
 
 /**
- * map<string, string> Secrets = 10;
- * @param {boolean=} opt_noLazyCreate Do not create the map if
- * empty, instead returning `undefined`
- * @return {!jspb.Map<string,string>}
+ * repeated Secret Secrets = 10;
+ * If you change this array by adding, removing or replacing elements, or if you
+ * replace the array itself, then you must call the setter to update it.
+ * @return {!Array.<!proto.firestarter.Secret>}
  */
-proto.firestarter.Config.prototype.getSecretsMap = function(opt_noLazyCreate) {
-  return /** @type {!jspb.Map<string,string>} */ (
-      jspb.Message.getMapField(this, 10, opt_noLazyCreate,
-      null));
+proto.firestarter.Config.prototype.getSecretsList = function() {
+  return /** @type{!Array.<!proto.firestarter.Secret>} */ (
+    jspb.Message.getRepeatedWrapperField(this, proto.firestarter.Secret, 10));
+};
+
+
+/** @param {Array.<!proto.firestarter.Secret>} value  */
+proto.firestarter.Config.prototype.setSecretsList = function(value) {
+  jspb.Message.setRepeatedWrapperField(this, 10, value);
+};
+
+
+proto.firestarter.Config.prototype.clearSecretsList = function() {
+  this.setSecretsList([]);
 };
 
 

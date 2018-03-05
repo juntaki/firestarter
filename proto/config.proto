@@ -31,6 +31,11 @@ message RestoreConfigListRequest {
 message RestoreConfigListResponse {
 }
 
+message Secret {
+  string Key = 1;
+  string Value = 2;
+}
+
 message Config {
   string Title = 1;
   string CallbackID = 2;
@@ -41,7 +46,7 @@ message Config {
   string BodyTemplate = 7;
   bool Confirm = 8;
   repeated string Actions = 9;
-  map<string, string> Secrets = 10;
+  repeated Secret Secrets = 10;
 }
 
 message ConfigList {
