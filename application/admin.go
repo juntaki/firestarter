@@ -3,6 +3,8 @@ package application
 import (
 	"context"
 
+	"sort"
+
 	"github.com/juntaki/firestarter/domain"
 	proto "github.com/juntaki/firestarter/proto"
 	"github.com/k0kubun/pp"
@@ -31,10 +33,17 @@ func (a *AdminAPI) GetConfigList(ctx context.Context, request *proto.GetConfigLi
 		return &proto.ConfigList{}, err
 	}
 
+	// sort by id
+	keys := make([]string, 0)
+	for k := range config {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
 	result := &proto.ConfigList{}
-	for _, v := range config {
-		v.Mask()
-		result.Config = append(result.Config, a.configToPbConfig(v))
+	for _, k := range keys {
+		config[k].Mask()
+		result.Config = append(result.Config, a.configToPbConfig(config[k]))
 	}
 
 	return result, nil
