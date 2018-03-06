@@ -1,9 +1,11 @@
 package domain
 
 import (
+	"bytes"
 	"regexp"
 	"text/template"
 
+	"github.com/pkg/errors"
 	"github.com/rs/xid"
 	"gopkg.in/go-playground/validator.v9"
 )
@@ -38,7 +40,7 @@ func (q *ConfigMap) FindByCallbackID(callbackID string) *Config {
 type Config struct {
 	Title              string   // for admin
 	Channels           []string `validate:"unique,required,dive,required"`
-	Text               string   `validate:"required"`
+	TextTemplateString string   `validate:"required"`
 	RegexpString       string   `validate:"required"`
 	Actions            []string `validate:"unique"`
 	CallbackID         string   // should be unique
@@ -51,6 +53,7 @@ type Config struct {
 	Regexp       *regexp.Regexp
 	URLTemplate  *template.Template
 	BodyTemplate *template.Template
+	TextTemplate *template.Template
 }
 
 func ConfigValidator(sl validator.StructLevel) {
@@ -66,10 +69,42 @@ func ConfigValidator(sl validator.StructLevel) {
 		sl.ReportError(config.URLTemplateString, "URLTemplateString", "", "", "")
 	}
 
+	_, err = template.New("text").Parse(config.TextTemplateString)
+	if err != nil {
+		sl.ReportError(config.TextTemplateString, "TextTemplateString", "", "", "")
+	}
+
 	_, err = regexp.Compile(config.RegexpString)
 	if err != nil {
 		sl.ReportError(config.RegexpString, "RegexpString", "", "", "")
 	}
+}
+
+func (c *Config) TextCompile(matched []string) (string, error) {
+	textBuf := new(bytes.Buffer)
+	err := c.TextTemplate.Execute(textBuf, map[string]interface{}{"matched": matched})
+	if err != nil {
+		return "", errors.Wrap(err, "Text template failed")
+	}
+	return textBuf.String(), nil
+}
+
+func (c *Config) URLCompile(value string, matched []string, secrets map[string]string) (string, error) {
+	urlBuf := new(bytes.Buffer)
+	err := c.URLTemplate.Execute(urlBuf, map[string]interface{}{"value": value, "matched": matched, "secrets": secrets})
+	if err != nil {
+		return "", errors.Wrap(err, "URL template failed")
+	}
+	return urlBuf.String(), nil
+}
+
+func (c *Config) BodyCompile(value string, matched []string, secrets map[string]string) (string, error) {
+	bodyBuf := new(bytes.Buffer)
+	err := c.BodyTemplate.Execute(bodyBuf, map[string]interface{}{"value": value, "matched": matched, "secrets": secrets})
+	if err != nil {
+		return "", errors.Wrap(err, "Body template failed")
+	}
+	return bodyBuf.String(), nil
 }
 
 func (c *Config) Hydrate() {
@@ -88,6 +123,8 @@ func (c *Config) Hydrate() {
 		template.Must(template.New(c.CallbackID + "body").Parse(c.BodyTemplateString))
 	c.URLTemplate =
 		template.Must(template.New(c.CallbackID + "url").Parse(c.URLTemplateString))
+	c.TextTemplate =
+		template.Must(template.New(c.CallbackID + "text").Parse(c.TextTemplateString))
 	c.Regexp = regexp.MustCompile(c.RegexpString)
 }
 

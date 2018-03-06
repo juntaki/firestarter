@@ -59,7 +59,7 @@ func TestConfigRepositoryImpl_GetConfigList(t *testing.T) {
 				configMap["ba8oiiei1gbjr0ucqbo0"] = &domain.Config{
 					Title:              "Test",
 					Channels:           []string{"bottest"},
-					Text:               "Deploy app",
+					TextTemplateString: "Deploy app",
 					RegexpString:       "^deploy$",
 					Actions:            []string{"master", "branch"},
 					CallbackID:         "ba8oiiei1gbjr0ucqbo0",

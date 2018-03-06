@@ -1326,7 +1326,7 @@ proto.firestarter.Config.toObject = function(includeInstance, msg) {
     title: jspb.Message.getFieldWithDefault(msg, 1, ""),
     id: jspb.Message.getFieldWithDefault(msg, 2, ""),
     channelsList: jspb.Message.getRepeatedField(msg, 3),
-    text: jspb.Message.getFieldWithDefault(msg, 4, ""),
+    texttemplate: jspb.Message.getFieldWithDefault(msg, 4, ""),
     regexp: jspb.Message.getFieldWithDefault(msg, 5, ""),
     urltemplate: jspb.Message.getFieldWithDefault(msg, 6, ""),
     bodytemplate: jspb.Message.getFieldWithDefault(msg, 7, ""),
@@ -1384,7 +1384,7 @@ proto.firestarter.Config.deserializeBinaryFromReader = function(msg, reader) {
       break;
     case 4:
       var value = /** @type {string} */ (reader.readString());
-      msg.setText(value);
+      msg.setTexttemplate(value);
       break;
     case 5:
       var value = /** @type {string} */ (reader.readString());
@@ -1461,7 +1461,7 @@ proto.firestarter.Config.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getText();
+  f = message.getTexttemplate();
   if (f.length > 0) {
     writer.writeString(
       4,
@@ -1574,16 +1574,16 @@ proto.firestarter.Config.prototype.clearChannelsList = function() {
 
 
 /**
- * optional string Text = 4;
+ * optional string TextTemplate = 4;
  * @return {string}
  */
-proto.firestarter.Config.prototype.getText = function() {
+proto.firestarter.Config.prototype.getTexttemplate = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
 };
 
 
 /** @param {string} value */
-proto.firestarter.Config.prototype.setText = function(value) {
+proto.firestarter.Config.prototype.setTexttemplate = function(value) {
   jspb.Message.setProto3StringField(this, 4, value);
 };
 

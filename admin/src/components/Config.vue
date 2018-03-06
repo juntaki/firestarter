@@ -28,9 +28,9 @@
 
       <h3>Bot message</h3>
 
-      <el-form-item label="Text" prop="text"
-      :rules="[{ required: true, message: 'Please input Text', trigger: 'change' }]">
-        <el-input v-model="form.text" placeholder="Deploy my app"></el-input>
+      <el-form-item label="Text" prop="texttemplate"
+      :rules="[{ required: true, message: 'Please input Text Template', trigger: 'change' }]">
+        <el-input v-model="form.texttemplate" placeholder="Deploy my app"></el-input>
       </el-form-item>
       <el-form-item label="Actions">
         <el-select v-model="form.actionsList" placeholder="master branch1 branch2"

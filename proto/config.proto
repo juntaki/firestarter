@@ -40,7 +40,7 @@ message Config {
   string Title = 1;
   string ID = 2;
   repeated string Channels = 3;
-  string Text = 4;
+  string TextTemplate = 4;
   string Regexp = 5;
   string URLTemplate = 6;
   string BodyTemplate = 7;

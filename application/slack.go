@@ -221,8 +221,12 @@ func (s *SlackBot) ProcessNonInteractiveRequest(c *domain.Config, sess *SessionV
 			return errors.Wrap(cause, "post message failed")
 		}
 	} else {
-		_, _, cause := s.API.PostMessage(channel,
-			c.Text, slack.PostMessageParameters{})
+		text, err := c.TextCompile(sess.matched)
+		if err != nil {
+			return err
+		}
+
+		_, _, cause := s.API.PostMessage(channel, text, slack.PostMessageParameters{})
 		if cause != nil {
 			return errors.Wrap(cause, "post message failed")
 		}
@@ -260,7 +264,13 @@ func (s *SlackBot) ProcessInteractiveRequest(c *domain.Config, sess *SessionValu
 			},
 		},
 	}
-	_, _, err := s.API.PostMessage(channel, c.Text, params)
+
+	text, err := c.TextCompile(sess.matched)
+	if err != nil {
+		return err
+	}
+
+	_, _, err = s.API.PostMessage(channel, text, params)
 	if err != nil {
 		return errors.Wrap(err, "post message failed")
 	}
@@ -269,19 +279,15 @@ func (s *SlackBot) ProcessInteractiveRequest(c *domain.Config, sess *SessionValu
 }
 
 func (s *SlackBot) SendRequest(c *domain.Config, sess *SessionValue) error {
-	urlBuf := new(bytes.Buffer)
-	bodyBuf := new(bytes.Buffer)
-	err := c.URLTemplate.Execute(urlBuf, map[string]interface{}{"value": sess.value, "matched": sess.matched, "secrets": c.Secrets})
+	url, err := c.URLCompile(sess.value, sess.matched, c.Secrets)
 	if err != nil {
-		return errors.Wrap(err, "URL template failed")
-	}
-	err = c.BodyTemplate.Execute(bodyBuf, map[string]interface{}{"value": sess.value, "matched": sess.matched, "secrets": c.Secrets})
-	if err != nil {
-		return errors.Wrap(err, "Body template failed")
+		return err
 	}
 
-	url := urlBuf.String()
-	body := bodyBuf.String()
+	body, err := c.BodyCompile(sess.value, sess.matched, c.Secrets)
+	if err != nil {
+		return err
+	}
 
 	s.Log.Infow("Send Request",
 		zap.String("url", url),

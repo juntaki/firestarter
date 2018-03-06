@@ -18,8 +18,8 @@
         <el-col :span="18">{{config.regexp}}</el-col>
       </el-row>
       <el-row>
-        <el-col :span="6">Text</el-col>
-        <el-col :span="18">{{config.text}}</el-col>
+        <el-col :span="6">Text Template</el-col>
+        <el-col :span="18">{{config.texttemplate}}</el-col>
       </el-row>
       <el-row>
         <el-col :span="6">Actions</el-col>
