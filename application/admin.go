@@ -18,7 +18,7 @@ type AdminAPI struct {
 }
 
 func (a *AdminAPI) GetConfig(ctx context.Context, request *proto.GetConfigRequest) (*proto.Config, error) {
-	config, err := a.ConfigRepository.GetConfig(request.CallbackID)
+	config, err := a.ConfigRepository.GetConfig(request.ID)
 	if err != nil {
 		return &proto.Config{}, err
 	}
@@ -76,7 +76,7 @@ func (a *AdminAPI) SetConfig(ctx context.Context, pbconfig *proto.Config) (*prot
 }
 
 func (a *AdminAPI) DeleteConfig(ctx context.Context, r *proto.DeleteConfigRequest) (*proto.DeleteConfigResponse, error) {
-	err := a.ConfigRepository.DeleteConfig(r.CallbackID)
+	err := a.ConfigRepository.DeleteConfig(r.ID)
 	return &proto.DeleteConfigResponse{}, err
 }
 
@@ -94,7 +94,7 @@ func (a *AdminAPI) GetChannels(ctx context.Context, req *proto.GetChannelsReques
 func (a *AdminAPI) pbConfigToConfig(pbconfig *proto.Config) *domain.Config {
 	config := &domain.Config{
 		Title:              pbconfig.Title,
-		CallbackID:         pbconfig.CallbackID,
+		CallbackID:         pbconfig.ID,
 		Channels:           pbconfig.Channels,
 		RegexpString:       pbconfig.Regexp,
 		Text:               pbconfig.Text,
@@ -115,7 +115,7 @@ func (a *AdminAPI) pbConfigToConfig(pbconfig *proto.Config) *domain.Config {
 func (a *AdminAPI) configToPbConfig(config *domain.Config) *proto.Config {
 	pbconfig := &proto.Config{
 		Title:        config.Title,
-		CallbackID:   config.CallbackID,
+		ID:           config.CallbackID,
 		Channels:     config.Channels,
 		Regexp:       config.RegexpString,
 		Text:         config.Text,

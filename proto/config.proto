@@ -3,7 +3,7 @@ syntax = "proto3";
 package firestarter;
 
 message GetConfigRequest {
-  string CallbackID = 1;
+  string ID = 1;
 }
 
 message GetConfigListRequest {
@@ -13,7 +13,7 @@ message SetConfigResponse {
 }
 
 message DeleteConfigRequest {
-  string CallbackID = 1;
+  string ID = 1;
 }
 
 message DeleteConfigResponse {
@@ -38,7 +38,7 @@ message Secret {
 
 message Config {
   string Title = 1;
-  string CallbackID = 2;
+  string ID = 2;
   repeated string Channels = 3;
   string Text = 4;
   string Regexp = 5;

@@ -1,13 +1,13 @@
 <template>
   <div>
-    <el-card v-for="config in configList" :key="config.callbackid" class="config-card">
+    <el-card v-for="config in configList" :key="config.id" class="config-card">
       <div slot="header" class="clearfix">
         <span style="font-size: 30px">{{config.title}}</span>
         <config @updateConfig="update()" :config="config" :channels="channels" style="float: right" />
       </div>
       <el-row>
         <el-col :span="6">ID(Auto-assigned)</el-col>
-        <el-col :span="18">{{config.callbackid}}</el-col>
+        <el-col :span="18">{{config.id}}</el-col>
       </el-row>
       <el-row>
         <el-col :span="6">Channels</el-col>

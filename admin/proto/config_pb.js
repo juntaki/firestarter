@@ -71,7 +71,7 @@ proto.firestarter.GetConfigRequest.prototype.toObject = function(opt_includeInst
  */
 proto.firestarter.GetConfigRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    callbackid: jspb.Message.getFieldWithDefault(msg, 1, "")
+    id: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -110,7 +110,7 @@ proto.firestarter.GetConfigRequest.deserializeBinaryFromReader = function(msg, r
     switch (field) {
     case 1:
       var value = /** @type {string} */ (reader.readString());
-      msg.setCallbackid(value);
+      msg.setId(value);
       break;
     default:
       reader.skipField();
@@ -141,7 +141,7 @@ proto.firestarter.GetConfigRequest.prototype.serializeBinary = function() {
  */
 proto.firestarter.GetConfigRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getCallbackid();
+  f = message.getId();
   if (f.length > 0) {
     writer.writeString(
       1,
@@ -152,16 +152,16 @@ proto.firestarter.GetConfigRequest.serializeBinaryToWriter = function(message, w
 
 
 /**
- * optional string CallbackID = 1;
+ * optional string ID = 1;
  * @return {string}
  */
-proto.firestarter.GetConfigRequest.prototype.getCallbackid = function() {
+proto.firestarter.GetConfigRequest.prototype.getId = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /** @param {string} value */
-proto.firestarter.GetConfigRequest.prototype.setCallbackid = function(value) {
+proto.firestarter.GetConfigRequest.prototype.setId = function(value) {
   jspb.Message.setProto3StringField(this, 1, value);
 };
 
@@ -445,7 +445,7 @@ proto.firestarter.DeleteConfigRequest.prototype.toObject = function(opt_includeI
  */
 proto.firestarter.DeleteConfigRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    callbackid: jspb.Message.getFieldWithDefault(msg, 1, "")
+    id: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -484,7 +484,7 @@ proto.firestarter.DeleteConfigRequest.deserializeBinaryFromReader = function(msg
     switch (field) {
     case 1:
       var value = /** @type {string} */ (reader.readString());
-      msg.setCallbackid(value);
+      msg.setId(value);
       break;
     default:
       reader.skipField();
@@ -515,7 +515,7 @@ proto.firestarter.DeleteConfigRequest.prototype.serializeBinary = function() {
  */
 proto.firestarter.DeleteConfigRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getCallbackid();
+  f = message.getId();
   if (f.length > 0) {
     writer.writeString(
       1,
@@ -526,16 +526,16 @@ proto.firestarter.DeleteConfigRequest.serializeBinaryToWriter = function(message
 
 
 /**
- * optional string CallbackID = 1;
+ * optional string ID = 1;
  * @return {string}
  */
-proto.firestarter.DeleteConfigRequest.prototype.getCallbackid = function() {
+proto.firestarter.DeleteConfigRequest.prototype.getId = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /** @param {string} value */
-proto.firestarter.DeleteConfigRequest.prototype.setCallbackid = function(value) {
+proto.firestarter.DeleteConfigRequest.prototype.setId = function(value) {
   jspb.Message.setProto3StringField(this, 1, value);
 };
 
@@ -1324,7 +1324,7 @@ proto.firestarter.Config.prototype.toObject = function(opt_includeInstance) {
 proto.firestarter.Config.toObject = function(includeInstance, msg) {
   var f, obj = {
     title: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    callbackid: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    id: jspb.Message.getFieldWithDefault(msg, 2, ""),
     channelsList: jspb.Message.getRepeatedField(msg, 3),
     text: jspb.Message.getFieldWithDefault(msg, 4, ""),
     regexp: jspb.Message.getFieldWithDefault(msg, 5, ""),
@@ -1376,7 +1376,7 @@ proto.firestarter.Config.deserializeBinaryFromReader = function(msg, reader) {
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
-      msg.setCallbackid(value);
+      msg.setId(value);
       break;
     case 3:
       var value = /** @type {string} */ (reader.readString());
@@ -1447,7 +1447,7 @@ proto.firestarter.Config.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getCallbackid();
+  f = message.getId();
   if (f.length > 0) {
     writer.writeString(
       2,
@@ -1530,16 +1530,16 @@ proto.firestarter.Config.prototype.setTitle = function(value) {
 
 
 /**
- * optional string CallbackID = 2;
+ * optional string ID = 2;
  * @return {string}
  */
-proto.firestarter.Config.prototype.getCallbackid = function() {
+proto.firestarter.Config.prototype.getId = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
 /** @param {string} value */
-proto.firestarter.Config.prototype.setCallbackid = function(value) {
+proto.firestarter.Config.prototype.setId = function(value) {
   jspb.Message.setProto3StringField(this, 2, value);
 };
 

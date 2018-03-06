@@ -165,7 +165,7 @@
         "Title": {
           "type": "string"
         },
-        "CallbackID": {
+        "ID": {
           "type": "string"
         },
         "Channels": {
@@ -218,7 +218,7 @@
     "firestarterDeleteConfigRequest": {
       "type": "object",
       "properties": {
-        "CallbackID": {
+        "ID": {
           "type": "string"
         }
       }
@@ -235,7 +235,7 @@
     "firestarterGetConfigRequest": {
       "type": "object",
       "properties": {
-        "CallbackID": {
+        "ID": {
           "type": "string"
         }
       }
