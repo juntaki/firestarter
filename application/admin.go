@@ -7,7 +7,6 @@ import (
 
 	"github.com/juntaki/firestarter/domain"
 	proto "github.com/juntaki/firestarter/proto"
-	"github.com/k0kubun/pp"
 	"github.com/twitchtv/twirp"
 )
 
@@ -50,7 +49,6 @@ func (a *AdminAPI) GetConfigList(ctx context.Context, request *proto.GetConfigLi
 }
 
 func (a *AdminAPI) SetConfig(ctx context.Context, pbconfig *proto.Config) (*proto.SetConfigResponse, error) {
-	pp.Println(pbconfig)
 	config := a.pbConfigToConfig(pbconfig)
 	err := a.Validator.ValidateConfig(config)
 	if err != nil {
