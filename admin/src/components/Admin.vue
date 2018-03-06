@@ -46,7 +46,6 @@
 
 <script>
 import config from '../../proto/config_pb_twirp'
-import pb from '../../proto/config_pb'
 import Config from './Config'
 import DeleteConfig from './DeleteConfig'
 export default {
@@ -69,8 +68,7 @@ export default {
   },
   methods: {
     update () {
-      const c = new pb.GetConfigListRequest()
-      this.client.getConfigList(c).then(
+      this.client.getConfigList({}).then(
         res => {
           this.configList = res.configList
         },
@@ -78,8 +76,7 @@ export default {
       )
     },
     updateChannel () {
-      const r = new pb.GetChannelsRequest()
-      this.client.getChannels(r).then(
+      this.client.getChannels({}).then(
         res => {
           this.channels = res.listList
         },

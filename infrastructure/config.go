@@ -21,29 +21,30 @@ type SaveConfig struct {
 	Confirm            bool
 	URLTemplateString  string
 	BodyTemplateString string
+	Secrets            map[string]string
 	Type               string
 }
 
-var configFile = "config/config.json"
-
 type ConfigRepositoryImpl struct {
 	currentConfig map[string]*SaveConfig
-	mutex         sync.RWMutex
+	mutex         *sync.RWMutex
 	loaded        bool
+	configFile    string
 }
 
 func NewConfigRepositoryImpl() *ConfigRepositoryImpl {
 	return &ConfigRepositoryImpl{
 		currentConfig: make(map[string]*SaveConfig),
-		mutex:         sync.RWMutex{},
+		mutex:         &sync.RWMutex{},
 		loaded:        false,
+		configFile:    "config/config.json",
 	}
 }
 
 func (c *ConfigRepositoryImpl) GetConfigList() (domain.ConfigMap, error) {
 	if !c.loaded {
 		c.mutex.Lock()
-		bytes, err := ioutil.ReadFile(configFile)
+		bytes, err := ioutil.ReadFile(c.configFile)
 		if err != nil {
 			pathErr := err.(*os.PathError)
 			errno := pathErr.Err.(syscall.Errno)
@@ -82,7 +83,7 @@ func (c *ConfigRepositoryImpl) saveConfig() error {
 		return errors.Wrap(err, "JSON marshal failed")
 	}
 
-	err = ioutil.WriteFile(configFile, bytes, 0600)
+	err = ioutil.WriteFile(c.configFile, bytes, 0600)
 	if err != nil {
 		return errors.Wrap(err, "Failed to write file")
 	}
@@ -123,8 +124,12 @@ func (c *ConfigRepositoryImpl) SetConfig(config *domain.Config) error {
 	defer c.mutex.Unlock()
 
 	// Update on memory
-	bak := c.currentConfig[config.CallbackID]
-	c.currentConfig[config.CallbackID] = c.configToSaveConfig(config)
+	bak, ok := c.currentConfig[config.CallbackID]
+	if ok {
+		c.currentConfig[config.CallbackID] = c.configToSaveConfig(config, bak.Secrets)
+	} else {
+		c.currentConfig[config.CallbackID] = c.configToSaveConfig(config, map[string]string{})
+	}
 
 	// Write it to file
 	err = c.saveConfig()
@@ -170,13 +175,15 @@ func (c *ConfigRepositoryImpl) saveConfigToConfig(saveconfig *SaveConfig) *domai
 		URLTemplateString:  saveconfig.URLTemplateString,
 		BodyTemplateString: saveconfig.BodyTemplateString,
 		Confirm:            saveconfig.Confirm,
+		Secrets:            saveconfig.Secrets,
 	}
+
 	config.Hydrate()
 	return config
 }
 
-func (c *ConfigRepositoryImpl) configToSaveConfig(config *domain.Config) *SaveConfig {
-	return &SaveConfig{
+func (c *ConfigRepositoryImpl) configToSaveConfig(config *domain.Config, oldSecrets map[string]string) *SaveConfig {
+	saveConfig := &SaveConfig{
 		Title:              config.Title,
 		CallbackID:         config.CallbackID,
 		Channels:           config.Channels,
@@ -186,5 +193,18 @@ func (c *ConfigRepositoryImpl) configToSaveConfig(config *domain.Config) *SaveCo
 		URLTemplateString:  config.URLTemplateString,
 		BodyTemplateString: config.BodyTemplateString,
 		Confirm:            config.Confirm,
+		Secrets:            make(map[string]string),
 	}
+
+	for k, new := range config.Secrets {
+		if old, ok := oldSecrets[k]; ok {
+			// Do not overwrite secrets
+			saveConfig.Secrets[k] = old
+			continue
+		}
+		saveConfig.Secrets[k] = new
+		// if value is not included in new config, just delete.
+	}
+
+	return saveConfig
 }

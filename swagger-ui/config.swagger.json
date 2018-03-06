@@ -95,6 +95,7 @@
     },
     "/twirp/firestarter.ConfigService/GetConfigList": {
       "post": {
+        "summary": "rpc DumpConfigList(DumpConfigListRequest) returns (ConfigList) {}\nrpc RestoreConfigList(RestoreConfigListRequest) returns (RestoreConfigListResponse) {}",
         "operationId": "GetConfigList",
         "responses": {
           "200": {
@@ -194,6 +195,12 @@
           "items": {
             "type": "string"
           }
+        },
+        "Secrets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/firestarterSecret"
+          }
         }
       }
     },
@@ -229,6 +236,17 @@
       "type": "object",
       "properties": {
         "CallbackID": {
+          "type": "string"
+        }
+      }
+    },
+    "firestarterSecret": {
+      "type": "object",
+      "properties": {
+        "Key": {
+          "type": "string"
+        },
+        "Value": {
           "type": "string"
         }
       }

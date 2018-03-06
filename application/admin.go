@@ -5,6 +5,7 @@ import (
 
 	"github.com/juntaki/firestarter/domain"
 	proto "github.com/juntaki/firestarter/proto"
+	"github.com/k0kubun/pp"
 	"github.com/twitchtv/twirp"
 )
 
@@ -20,6 +21,7 @@ func (a *AdminAPI) GetConfig(ctx context.Context, request *proto.GetConfigReques
 		return &proto.Config{}, err
 	}
 
+	config.Mask()
 	return a.configToPbConfig(config), nil
 }
 
@@ -31,12 +33,15 @@ func (a *AdminAPI) GetConfigList(ctx context.Context, request *proto.GetConfigLi
 
 	result := &proto.ConfigList{}
 	for _, v := range config {
+		v.Mask()
 		result.Config = append(result.Config, a.configToPbConfig(v))
 	}
+
 	return result, nil
 }
 
 func (a *AdminAPI) SetConfig(ctx context.Context, pbconfig *proto.Config) (*proto.SetConfigResponse, error) {
+	pp.Println(pbconfig)
 	config := a.pbConfigToConfig(pbconfig)
 	err := a.Validator.ValidateConfig(config)
 	if err != nil {
@@ -78,7 +83,7 @@ func (a *AdminAPI) GetChannels(ctx context.Context, req *proto.GetChannelsReques
 
 // Mapper
 func (a *AdminAPI) pbConfigToConfig(pbconfig *proto.Config) *domain.Config {
-	return &domain.Config{
+	config := &domain.Config{
 		Title:              pbconfig.Title,
 		CallbackID:         pbconfig.CallbackID,
 		Channels:           pbconfig.Channels,
@@ -88,11 +93,18 @@ func (a *AdminAPI) pbConfigToConfig(pbconfig *proto.Config) *domain.Config {
 		URLTemplateString:  pbconfig.URLTemplate,
 		BodyTemplateString: pbconfig.BodyTemplate,
 		Confirm:            pbconfig.Confirm,
+		Secrets:            make(map[string]string),
 	}
+
+	for _, s := range pbconfig.Secrets {
+		config.Secrets[s.Key] = s.Value
+	}
+
+	return config
 }
 
 func (a *AdminAPI) configToPbConfig(config *domain.Config) *proto.Config {
-	return &proto.Config{
+	pbconfig := &proto.Config{
 		Title:        config.Title,
 		CallbackID:   config.CallbackID,
 		Channels:     config.Channels,
@@ -102,5 +114,11 @@ func (a *AdminAPI) configToPbConfig(config *domain.Config) *proto.Config {
 		URLTemplate:  config.URLTemplateString,
 		BodyTemplate: config.BodyTemplateString,
 		Confirm:      config.Confirm,
+		Secrets:      make([]*proto.Secret, 0),
 	}
+
+	for k, v := range config.Secrets {
+		pbconfig.Secrets = append(pbconfig.Secrets, &proto.Secret{Key: k, Value: v})
+	}
+	return pbconfig
 }

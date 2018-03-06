@@ -8,6 +8,8 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
+var SercretValueMask = "<Secret value>"
+
 type ConfigRepository interface {
 	GetConfigList() (ConfigMap, error)
 	GetConfig(ID string) (*Config, error)
@@ -44,6 +46,7 @@ type Config struct {
 	URLTemplateString  string `validate:"required"`
 	BodyTemplateString string
 	Type               string
+	Secrets            map[string]string
 
 	Regexp       *regexp.Regexp
 	URLTemplate  *template.Template
@@ -86,4 +89,10 @@ func (c *Config) Hydrate() {
 	c.URLTemplate =
 		template.Must(template.New(c.CallbackID + "url").Parse(c.URLTemplateString))
 	c.Regexp = regexp.MustCompile(c.RegexpString)
+}
+
+func (c *Config) Mask() {
+	for k := range c.Secrets {
+		c.Secrets[k] = SercretValueMask
+	}
 }

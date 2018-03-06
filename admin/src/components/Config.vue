@@ -11,6 +11,9 @@
       <el-form-item label="Title" prop="title" :rules="[{ required: true, message: 'Please input title', trigger: 'change' }]">
         <el-input v-model="form.title" placeholder="Deploy bot for my team"></el-input>
       </el-form-item>
+
+      <h3>Trigger</h3>
+
       <el-form-item label="Channels" prop="channelsList"
         :rules="[{ required: true, message: 'Please input channels', trigger: 'change' }]">
         <el-select v-model="form.channelsList" placeholder="general random"
@@ -22,6 +25,8 @@
       :rules="[{ required: true, message: 'Please input Regexp', trigger: 'change' }]">
         <el-input v-model="form.regexp" placeholder="^depoy (.*)$"></el-input>
       </el-form-item>
+
+      <h3>Bot message</h3>
 
       <el-form-item label="Text" prop="text"
       :rules="[{ required: true, message: 'Please input Text', trigger: 'change' }]">
@@ -37,12 +42,32 @@
         <el-switch v-model="form.confirm"></el-switch>
       </el-form-item>
 
+      <h3>POST Request</h3>
+
       <el-form-item label="URL Template" prop="urltemplate"
       :rules="[{ required: true, message: 'Please input URL Template', trigger: 'change' }]">
-        <el-input v-model="form.urltemplate" placeholder="https://example.com/deploy?param={{index .matched 1}}&value={{value}}"></el-input>
+        <el-input v-model="form.urltemplate" :placeholder="urlTemplatePlaceholder"></el-input>
       </el-form-item>
       <el-form-item label="Body Template">
-        <el-input v-model="form.bodytemplate" placeholder="{ value: '{{value}}' }"></el-input>
+        <el-input v-model="form.bodytemplate" :placeholder="bodyTemplatePlaceholder"></el-input>
+      </el-form-item>
+
+      <h3>Secrets</h3>
+
+      <el-form-item
+        v-for="(secret, index) in secrets"
+        :label="'Secret (' + index + ')'"
+        :key="secret.key"
+        prop="secrets"
+      >
+        <el-row>
+          <el-col :span="10"><el-input v-model="secret.secretKey" placeholder="AWS_TOKEN" :disabled="secret.disabled"></el-input></el-col>
+          <el-col :span="10"><el-input v-model="secret.secretValue" placeholder="AKIAXXXXX" :disabled="secret.disabled"></el-input></el-col>
+          <el-col :span="4"><el-button @click.prevent="removeSecret(secret)" style="width: 100%">Delete</el-button></el-col>
+        </el-row>
+      </el-form-item>
+      <el-form-item>
+        <el-button @click="addSecret">New secret</el-button>
       </el-form-item>
 
       <div><el-button type="primary" style="width: 100%" @click="onSubmit()">Submit</el-button></div>
@@ -62,18 +87,66 @@
 
 <script>
 import config from '../../proto/config_pb_twirp'
+import pb from '../../proto/config_pb'
 export default {
   props: ['config', 'channels'],
   data () {
     const form = this.config
       ? JSON.parse(JSON.stringify(this.config))
-      : { id: null }
+      : {
+        id: null
+      }
+
+    const secrets = []
+    if (!this.newConfig) {
+      // Set temporary secrets
+      this.config.secretsList.forEach(secret => {
+        secrets.push({
+          key: secrets.length,
+          disabled: true,
+          secretKey: secret.key,
+          secretValue: secret.value
+        })
+      })
+
+      // Set initial secrets for form
+      const newSecret = []
+      secrets.forEach((v, i, a) => {
+        const pbsec = new pb.Secret()
+        pbsec.setKey(v.secretKey)
+        pbsec.setValue(v.secretValue)
+        newSecret.push(pbsec)
+      })
+      form.secretsList = newSecret
+    }
+
     const host = location.protocol + '//' + location.host
     return {
       client: config.createConfigServiceClient(host),
       showDialog: false,
       showDeleteDialog: false,
-      form: form
+      form: form,
+      secrets: secrets,
+      urlTemplatePlaceholder:
+        'https://example.com/deploy?param={{index .matched 1}}&value={{value}}',
+      bodyTemplatePlaceholder: "{ value: '{{value}}' }"
+    }
+  },
+  watch: {
+    secrets: {
+      handler: function (newValue, oldValue) {
+        const newSecret = []
+
+        newValue.forEach((v, i, a) => {
+          // workaround for twirp-js bug.
+          const pbsec = new pb.Secret()
+          pbsec.setKey(v.secretKey)
+          pbsec.setValue(v.secretValue)
+          newSecret.push(pbsec)
+        })
+        this.form.secretsList = newSecret
+      },
+      deep: true
     }
   },
   computed: {
@@ -86,6 +159,20 @@ export default {
     }
   },
   methods: {
+    removeSecret (item) {
+      var index = this.secrets.indexOf(item)
+      if (index !== -1) {
+        this.secrets.splice(index, 1)
+      }
+    },
+    addSecret () {
+      this.secrets.push({
+        key: Date.now(), // just for key for vue
+        disabled: false,
+        secretKey: '',
+        secretValue: ''
+      })
+    },
     onSubmit () {
       this.$refs['form'].validate(valid => {
         if (valid) this.update()
