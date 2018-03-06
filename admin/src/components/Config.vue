@@ -87,19 +87,20 @@
 
 <script>
 import config from '../../proto/config_pb_twirp'
+import pb from '../../proto/config_pb'
 export default {
   props: ['config', 'channels'],
   data () {
     const form = this.config
       ? JSON.parse(JSON.stringify(this.config))
       : {
-        id: null,
-        secrets: []
+        id: null
       }
 
     const secrets = []
-    if (form.secretsList) {
-      form.secretsList.forEach((secret) => {
+    if (!this.newConfig) {
+      // Set temporary secrets
+      this.config.secretsList.forEach(secret => {
         secrets.push({
           key: secrets.length,
           disabled: true,
@@ -107,6 +108,16 @@ export default {
           secretValue: secret.value
         })
       })
+
+      // Set initial secrets for form
+      const newSecret = []
+      secrets.forEach((v, i, a) => {
+        const pbsec = new pb.Secret()
+        pbsec.setKey(v.secretKey)
+        pbsec.setValue(v.secretValue)
+        newSecret.push(pbsec)
+      })
+      form.secretsList = newSecret
     }
 
     const host = location.protocol + '//' + location.host
@@ -116,7 +127,8 @@ export default {
       showDeleteDialog: false,
       form: form,
       secrets: secrets,
-      urlTemplatePlaceholder: 'https://example.com/deploy?param={{index .matched 1}}&value={{value}}',
+      urlTemplatePlaceholder:
+        'https://example.com/deploy?param={{index .matched 1}}&value={{value}}',
       bodyTemplatePlaceholder: "{ value: '{{value}}' }"
     }
   },
@@ -124,10 +136,13 @@ export default {
     secrets: {
       handler: function (newValue, oldValue) {
         const newSecret = []
+
         newValue.forEach((v, i, a) => {
-          newSecret.push({
-            secret: v.secretKey,
-            value: v.secretValue})
+          // workaround for twirp-js bug.
+          const pbsec = new pb.Secret()
+          pbsec.setKey(v.secretKey)
+          pbsec.setValue(v.secretValue)
+          newSecret.push(pbsec)
         })
         this.form.secretsList = newSecret
       },
@@ -152,7 +167,7 @@ export default {
     },
     addSecret () {
       this.secrets.push({
-        key: Date.now(),
+        key: Date.now(), // just for key for vue
         disabled: false,
         secretKey: '',
         secretValue: ''
