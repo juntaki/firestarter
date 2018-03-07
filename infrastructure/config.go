@@ -9,6 +9,7 @@ import (
 
 	"github.com/juntaki/firestarter/domain"
 	"github.com/pkg/errors"
+	"go.uber.org/zap"
 )
 
 type SaveConfig struct {
@@ -30,14 +31,16 @@ type ConfigRepositoryImpl struct {
 	mutex         *sync.RWMutex
 	loaded        bool
 	configFile    string
+	logger        *zap.SugaredLogger
 }
 
-func NewConfigRepositoryImpl() *ConfigRepositoryImpl {
+func NewConfigRepositoryImpl(logger *zap.SugaredLogger) *ConfigRepositoryImpl {
 	return &ConfigRepositoryImpl{
 		currentConfig: make(map[string]*SaveConfig),
 		mutex:         &sync.RWMutex{},
 		loaded:        false,
 		configFile:    "config/config.json",
+		logger:        logger,
 	}
 }
 
@@ -126,8 +129,10 @@ func (c *ConfigRepositoryImpl) SetConfig(config *domain.Config) error {
 	// Update on memory
 	bak, ok := c.currentConfig[config.CallbackID]
 	if ok {
+		c.logger.Info("Overwrite old secrets", zap.String("CallbackID", config.CallbackID))
 		c.currentConfig[config.CallbackID] = c.configToSaveConfig(config, bak.Secrets)
 	} else {
+		c.logger.Info("New config, new secrets", zap.String("CallbackID", config.CallbackID))
 		c.currentConfig[config.CallbackID] = c.configToSaveConfig(config, map[string]string{})
 	}
 
@@ -175,7 +180,12 @@ func (c *ConfigRepositoryImpl) saveConfigToConfig(saveconfig *SaveConfig) *domai
 		URLTemplateString:  saveconfig.URLTemplateString,
 		BodyTemplateString: saveconfig.BodyTemplateString,
 		Confirm:            saveconfig.Confirm,
-		Secrets:            saveconfig.Secrets,
+		Secrets:            make(map[string]string),
+	}
+
+	// Deep copy
+	for k, v := range saveconfig.Secrets {
+		config.Secrets[k] = v
 	}
 
 	config.Hydrate()
@@ -198,9 +208,11 @@ func (c *ConfigRepositoryImpl) configToSaveConfig(config *domain.Config, oldSecr
 
 	for k, new := range config.Secrets {
 		if old, ok := oldSecrets[k]; ok {
-			// Do not overwrite secrets
-			saveConfig.Secrets[k] = old
-			continue
+			if new == domain.SercretValueMask {
+				// Do not overwrite secrets
+				saveConfig.Secrets[k] = old
+				continue
+			}
 		}
 		saveConfig.Secrets[k] = new
 		// if value is not included in new config, just delete.

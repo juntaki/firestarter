@@ -307,8 +307,8 @@ func (s *SlackBot) SendRequest(c *domain.Config, sess *SessionValue) error {
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
-	if err != nil {
-		return errors.Wrap(err, "Send request failed")
+	if err != nil || resp.StatusCode != http.StatusOK {
+		return errors.Wrap(err, fmt.Sprintf("Send request failed status: %d", resp.StatusCode))
 	}
 	defer resp.Body.Close()
 	return nil

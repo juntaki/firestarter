@@ -3,6 +3,7 @@ package domain
 import (
 	"bytes"
 	"regexp"
+	"strings"
 	"text/template"
 
 	"github.com/pkg/errors"
@@ -10,7 +11,7 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
-var SercretValueMask = "<Secret value>"
+var SercretValueMask = "<SecretValue>"
 
 type ConfigRepository interface {
 	GetConfigList() (ConfigMap, error)
@@ -78,6 +79,14 @@ func ConfigValidator(sl validator.StructLevel) {
 	if err != nil {
 		sl.ReportError(config.RegexpString, "RegexpString", "", "", "")
 	}
+}
+
+func (c *Config) ExecSecretValueMask(raw string) string {
+	result := raw
+	for _, v := range c.Secrets {
+		result = strings.Replace(result, v, SercretValueMask, -1)
+	}
+	return result
 }
 
 func (c *Config) TextCompile(matched []string) (string, error) {

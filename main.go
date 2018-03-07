@@ -47,7 +47,7 @@ func main() {
 	}
 
 	slackAPI := slack.New(token)
-	configRepository := infrastructure.NewConfigRepositoryImpl()
+	configRepository := infrastructure.NewConfigRepositoryImpl(logger)
 	chatRepository := &infrastructure.ChatRepositorySlackImpl{API: slackAPI}
 
 	bot := application.NewSlackBot(

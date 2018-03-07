@@ -22,6 +22,7 @@ FROM golang:1.10.0-stretch
 ENV SRC_DIR=/go/src/github.com/juntaki/firestarter
 
 COPY --from=0 $SRC_DIR/main /app/main
+COPY --from=0 $SRC_DIR/swagger-ui /app/swagger-ui
 COPY --from=1 $SRC_DIR/admin/dist /app/admin/dist
 WORKDIR /app
 
