@@ -6,9 +6,16 @@ import (
 	"testing"
 
 	"github.com/juntaki/firestarter/domain"
+	"go.uber.org/zap"
 )
 
 func TestNewConfigRepositoryImpl(t *testing.T) {
+	zapLogger, err := zap.NewProduction()
+	if err != nil {
+		panic("logger initialize failed")
+	}
+	logger := zapLogger.Sugar()
+
 	tests := []struct {
 		name string
 		want *ConfigRepositoryImpl
@@ -20,13 +27,14 @@ func TestNewConfigRepositoryImpl(t *testing.T) {
 				mutex:         &sync.RWMutex{},
 				loaded:        false,
 				configFile:    "config/config.json",
+				logger:        logger,
 			},
 		},
 		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewConfigRepositoryImpl(); !reflect.DeepEqual(got, tt.want) {
+			if got := NewConfigRepositoryImpl(logger); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewConfigRepositoryImpl() = %v, want %v", got, tt.want)
 			}
 		})
@@ -59,13 +67,14 @@ func TestConfigRepositoryImpl_GetConfigList(t *testing.T) {
 				configMap["ba8oiiei1gbjr0ucqbo0"] = &domain.Config{
 					Title:              "Test",
 					Channels:           []string{"bottest"},
-					TextTemplateString: "Deploy app",
 					RegexpString:       "^deploy$",
 					Actions:            []string{"master", "branch"},
 					CallbackID:         "ba8oiiei1gbjr0ucqbo0",
 					Confirm:            true,
 					URLTemplateString:  "http://httpbin.org/post?test={{index .matched 1}}",
 					BodyTemplateString: "{ value : {{index .matched 1}} }",
+					TextTemplateString: "Deploy app",
+					Secrets:            map[string]string{},
 				}
 				configMap["ba8oiiei1gbjr0ucqbo0"].Hydrate()
 				return configMap

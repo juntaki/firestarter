@@ -2,9 +2,12 @@
   <div>
     <el-card v-for="config in configList" :key="config.id" class="config-card">
       <div slot="header" class="clearfix">
+        <el-button  @click="show = !show" type="primary">show</el-button>
         <span style="font-size: 30px">{{config.title}}</span>
         <config @updateConfig="update()" :config="config" :channels="channels" style="float: right" />
       </div>
+      <el-collapse-transition>
+        <div v-show="show">
       <el-row>
         <el-col :span="6">ID(Auto-assigned)</el-col>
         <el-col :span="18">{{config.id}}</el-col>
@@ -37,6 +40,8 @@
         <el-col :span="6">Body Template</el-col>
         <el-col :span="18">{{config.bodytemplate}}</el-col>
       </el-row>
+        </div>
+      </el-collapse-transition>
     </el-card>
     <div class="config-card">
       <config @updateConfig="update()" :channels="channels"/>
