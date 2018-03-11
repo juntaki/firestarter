@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import config from '../../proto/config_pb_twirp'
+import twirp from '../../proto/config_pb_twirp'
 import Config from './Config'
 import DeleteConfig from './DeleteConfig'
 export default {
@@ -60,7 +60,7 @@ export default {
   },
   data () {
     const host = location.protocol + '//' + location.host
-    const client = config.createConfigServiceClient(host)
+    const client = twirp.createConfigServiceClient(host)
     return {
       configList: [],
       client: client,

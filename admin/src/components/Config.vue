@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import config from '../../proto/config_pb_twirp'
+import twirp from '../../proto/config_pb_twirp'
 import pb from '../../proto/config_pb'
 export default {
   props: ['config', 'channels'],
@@ -122,7 +122,7 @@ export default {
 
     const host = location.protocol + '//' + location.host
     return {
-      client: config.createConfigServiceClient(host),
+      client: twirp.createConfigServiceClient(host),
       showDialog: false,
       showDeleteDialog: false,
       form: form,
