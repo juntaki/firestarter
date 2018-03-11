@@ -108,16 +108,6 @@ export default {
           secretValue: secret.value
         })
       })
-
-      // Set initial secrets for form
-      const newSecret = []
-      secrets.forEach((v, i, a) => {
-        const pbsec = new pb.Secret()
-        pbsec.setKey(v.secretKey)
-        pbsec.setValue(v.secretValue)
-        newSecret.push(pbsec)
-      })
-      form.secretsList = newSecret
     }
 
     const host = location.protocol + '//' + location.host
@@ -130,23 +120,6 @@ export default {
       urlTemplatePlaceholder:
         'https://example.com/deploy?param={{index .matched 1}}&value={{value}}',
       bodyTemplatePlaceholder: "{ value: '{{value}}' }"
-    }
-  },
-  watch: {
-    secrets: {
-      handler: function (newValue, oldValue) {
-        const newSecret = []
-
-        newValue.forEach((v, i, a) => {
-          // workaround for twirp-js bug.
-          const pbsec = new pb.Secret()
-          pbsec.setKey(v.secretKey)
-          pbsec.setValue(v.secretValue)
-          newSecret.push(pbsec)
-        })
-        this.form.secretsList = newSecret
-      },
-      deep: true
     }
   },
   computed: {
@@ -179,7 +152,25 @@ export default {
       })
     },
     update () {
-      this.client.setConfig(this.form).then(
+      const config = new pb.Config()
+      config.setId(this.form.id)
+      config.setTitle(this.form.title)
+      config.setChannelsList(this.form.channelsList)
+      config.setRegexp(this.form.regexp)
+      config.setTexttemplate(this.form.texttemplate)
+      config.setActionsList(this.form.actionsList)
+      config.setConfirm(this.form.confirm)
+      config.setUrltemplate(this.form.urltemplate)
+      config.setBodytemplate(this.form.bodytemplate)
+      config.setSecretsList([])
+      this.secrets.forEach((v, i, a) => {
+        const pbsec = new pb.Secret()
+        pbsec.setKey(v.secretKey)
+        pbsec.setValue(v.secretValue)
+        config.addSecrets(pbsec)
+      })
+
+      this.client.setConfigRaw(config).then(
         res => {
           this.$message({
             message: 'Config have been successfully updated',

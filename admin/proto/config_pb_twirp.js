@@ -21,7 +21,16 @@ module.exports.createConfigServiceClient = function(baseurl, extraHeaders, useJS
         getConfig: function(data) { return rpc("GetConfig", rpc.buildMessage(pb.GetConfigRequest, data), pb.Config); },
         setConfig: function(data) { return rpc("SetConfig", rpc.buildMessage(pb.Config, data), pb.SetConfigResponse); },
         deleteConfig: function(data) { return rpc("DeleteConfig", rpc.buildMessage(pb.DeleteConfigRequest, data), pb.DeleteConfigResponse); },
-        getChannels: function(data) { return rpc("GetChannels", rpc.buildMessage(pb.GetChannelsRequest, data), pb.Channels); }
+        getChannels: function(data) { return rpc("GetChannels", rpc.buildMessage(pb.GetChannelsRequest, data), pb.Channels); },
+        /**
+         * rpc DumpConfigList(DumpConfigListRequest) returns (ConfigList) {}
+         * rpc RestoreConfigList(RestoreConfigListRequest) returns (RestoreConfigListResponse) {}
+         */
+        getConfigListRaw: function(data) { return rpc("GetConfigList", data, pb.ConfigList); },
+        getConfigRaw: function(data) { return rpc("GetConfig", data, pb.Config); },
+        setConfigRaw: function(data) { return rpc("SetConfig", data, pb.SetConfigResponse); },
+        deleteConfigRaw: function(data) { return rpc("DeleteConfig", data, pb.DeleteConfigResponse); },
+        getChannelsRaw: function(data) { return rpc("GetChannels", data, pb.Channels); }
     }
 }
 
