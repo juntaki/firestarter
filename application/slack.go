@@ -330,54 +330,52 @@ func (s *SlackBot) Run() error {
 	rtm := s.API.NewRTM()
 	go rtm.ManageConnection()
 
-	for {
-		select {
-		case msg := <-rtm.IncomingEvents:
-			switch ev := msg.Data.(type) {
-			case *slack.HelloEvent:
-				s.Log.Info("Hello Event")
-			case *slack.MessageEvent:
-				if ev.Msg.SubType == "bot_message" {
-					break
-				}
-				// Get config on each event, it may be updated.
-				config, err := s.ConfigRepository.GetConfigList()
-				if err != nil {
-					return err
-				}
-
-				name, err := s.getChannelName(ev.Msg.Channel)
-				if err != nil {
-					return err
-				}
-				c := config.FindMatched(name, ev.Msg.Text)
-				if c == nil {
-					break
-				}
-				s.Log.Infow("RTM Match", zap.String("id", c.CallbackID),
-					zap.String("regexp", c.Regexp.String()),
-					zap.String("message", ev.Msg.Text),
-				)
-
-				// Create Session for matched request
-				sess := s.Session.Create(c.Regexp.FindStringSubmatch(ev.Msg.Text))
-				s.Log.Infow("Create Session", zap.String("SessionID", sess.id))
-
-				// No Action means non interactive request
-				if len(c.Actions) == 0 {
-					err := s.ProcessNonInteractiveRequest(c, sess, ev.Channel)
-					if err != nil {
-						return errors.Wrap(err, "process non interactive")
-					}
-				} else {
-					err := s.ProcessInteractiveRequest(c, sess, ev.Channel)
-					if err != nil {
-						return errors.Wrap(err, "process interactive")
-					}
-				}
-			case *slack.InvalidAuthEvent:
-				return errors.New("Invalid credentials")
+	for msg := range rtm.IncomingEvents {
+		switch ev := msg.Data.(type) {
+		case *slack.HelloEvent:
+			s.Log.Info("Hello Event")
+		case *slack.MessageEvent:
+			if ev.Msg.SubType == "bot_message" {
+				break
 			}
+			// Get config on each event, it may be updated.
+			config, err := s.ConfigRepository.GetConfigList()
+			if err != nil {
+				return err
+			}
+
+			name, err := s.getChannelName(ev.Msg.Channel)
+			if err != nil {
+				return err
+			}
+			c := config.FindMatched(name, ev.Msg.Text)
+			if c == nil {
+				break
+			}
+			s.Log.Infow("RTM Match", zap.String("id", c.CallbackID),
+				zap.String("regexp", c.Regexp.String()),
+				zap.String("message", ev.Msg.Text),
+			)
+
+			// Create Session for matched request
+			sess := s.Session.Create(c.Regexp.FindStringSubmatch(ev.Msg.Text))
+			s.Log.Infow("Create Session", zap.String("SessionID", sess.id))
+
+			// No Action means non interactive request
+			if len(c.Actions) == 0 {
+				err := s.ProcessNonInteractiveRequest(c, sess, ev.Channel)
+				if err != nil {
+					return errors.Wrap(err, "process non interactive")
+				}
+			} else {
+				err := s.ProcessInteractiveRequest(c, sess, ev.Channel)
+				if err != nil {
+					return errors.Wrap(err, "process interactive")
+				}
+			}
+		case *slack.InvalidAuthEvent:
+			return errors.New("Invalid credentials")
 		}
 	}
+	return errors.New("Never happen")
 }
