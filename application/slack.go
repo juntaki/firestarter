@@ -330,12 +330,21 @@ func (s *SlackBot) Run() error {
 	rtm := s.API.NewRTM()
 	go rtm.ManageConnection()
 
+	auth, err := s.API.AuthTest()
+	if err != nil {
+		return err
+	}
+	bot, err := s.API.GetUserInfo(auth.UserID)
+	if err != nil {
+		return err
+	}
+
 	for msg := range rtm.IncomingEvents {
 		switch ev := msg.Data.(type) {
 		case *slack.HelloEvent:
 			s.Log.Info("Hello Event")
 		case *slack.MessageEvent:
-			if ev.Msg.SubType == "bot_message" {
+			if ev.Msg.BotID == bot.Profile.BotID {
 				break
 			}
 			// Get config on each event, it may be updated.
