@@ -338,12 +338,14 @@ func (s *SlackBot) Run() error {
 	if err != nil {
 		return err
 	}
+	s.Log.Debugw("Firestarter bot ID", zap.String("ID", bot.Profile.BotID))
 
 	for msg := range rtm.IncomingEvents {
 		switch ev := msg.Data.(type) {
 		case *slack.HelloEvent:
 			s.Log.Info("Hello Event")
 		case *slack.MessageEvent:
+			s.Log.Debugw("Message bot ID", zap.String("ID", ev.Msg.BotID))
 			if ev.Msg.BotID == bot.Profile.BotID {
 				break
 			}
@@ -357,7 +359,17 @@ func (s *SlackBot) Run() error {
 			if err != nil {
 				return err
 			}
-			c := config.FindMatched(name, ev.Msg.Text)
+
+			message := ev.Msg.Text
+			if message == "" { // IFTTT message with title
+				message = ev.Msg.Attachments[0].Text
+			}
+			if message == "" { // IFTTT message only
+				message = ev.Msg.Attachments[0].Pretext
+			}
+
+			s.Log.Debugw("Message to be parsed", zap.String("message", message))
+			c := config.FindMatched(name, message)
 			if c == nil {
 				break
 			}
