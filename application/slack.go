@@ -380,11 +380,11 @@ func (s *SlackBot) Run() error {
 			}
 			s.Log.Infow("RTM Match", zap.String("id", c.CallbackID),
 				zap.String("regexp", c.Regexp.String()),
-				zap.String("message", ev.Msg.Text),
+				zap.String("message", message),
 			)
 
 			// Create Session for matched request
-			sess := s.Session.Create(c.Regexp.FindStringSubmatch(ev.Msg.Text))
+			sess := s.Session.Create(c.Regexp.FindStringSubmatch(message))
 			s.Log.Infow("Create Session", zap.String("SessionID", sess.id))
 
 			// No Action means non interactive request
