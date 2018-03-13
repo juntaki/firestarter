@@ -6,6 +6,8 @@ import (
 	"strings"
 	"text/template"
 
+	"net/url"
+
 	"github.com/pkg/errors"
 	"github.com/rs/xid"
 	"gopkg.in/go-playground/validator.v9"
@@ -104,7 +106,12 @@ func (c *Config) URLCompile(value string, matched []string, secrets map[string]s
 	if err != nil {
 		return "", errors.Wrap(err, "URL template failed")
 	}
-	return urlBuf.String(), nil
+
+	parsedURL, err := url.Parse(urlBuf.String())
+	if err != nil {
+		return "", errors.Wrap(err, "URL parse failed")
+	}
+	return parsedURL.String(), nil
 }
 
 func (c *Config) BodyCompile(value string, matched []string, secrets map[string]string) (string, error) {
