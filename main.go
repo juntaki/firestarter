@@ -13,7 +13,6 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/juntaki/firestarter-sqs-proxy/lib"
 	"github.com/juntaki/firestarter/application"
-	"github.com/juntaki/firestarter/domain"
 	"github.com/juntaki/firestarter/infrastructure"
 	proto "github.com/juntaki/firestarter/proto"
 )
@@ -25,11 +24,11 @@ func main() {
 	}
 	logger := zapLogger.Sugar()
 
+	// Global Settings
 	token := os.Getenv("SLACK_TOKEN")
 	if len(token) == 0 {
 		logger.Error("SLACK_TOKEN is required")
 	}
-
 	verificationToken := os.Getenv("SLACK_VERIFICATION_TOKEN")
 	if len(verificationToken) == 0 {
 		logger.Error("SLACK_VERIFICATION_TOKEN is required")
@@ -46,18 +45,12 @@ func main() {
 		}
 	}
 
+	// Dependent modules
 	slackAPI := slack.New(token)
 	configRepository := infrastructure.NewConfigRepositoryImpl(logger)
 	chatRepository := &infrastructure.ChatRepositorySlackImpl{API: slackAPI}
 
-	bot := application.NewSlackBot(
-		verificationToken,
-		slackAPI,
-		configRepository,
-		logger,
-		sqsMode,
-	)
-
+	// Middleware
 	botRouter := chi.NewRouter()
 	botRouter.Use(middleware.RequestID)
 	botRouter.Use(middleware.RealIP)
@@ -72,19 +65,31 @@ func main() {
 	adminRouter.Use(middleware.Recoverer)
 	adminRouter.Use(middleware.Timeout(60 * time.Second))
 
+	// Dependency Injection
 	// Interarcitve message API, Slack <-> bot
+	bot := application.NewSlackBot(
+		verificationToken,
+		slackAPI,
+		configRepository,
+		logger,
+		sqsMode,
+	)
 	botRouter.Post("/", bot.InteractiveMessageHandler)
 
 	// admin API, admin <-> firestarter
-	apiHandler := proto.NewConfigServiceServer(&application.AdminAPI{
-		ConfigRepository: configRepository,
-		ChatRepository:   chatRepository,
-		Validator:        domain.NewValidator(),
-	}, nil)
+	adminAPI := application.NewAdminAPI(
+		configRepository,
+		chatRepository,
+	)
+	apiHandler := proto.NewConfigServiceServer(adminAPI, nil)
 	adminRouter.Mount("/twirp/", apiHandler)
-	adminRouter.Mount("/", http.FileServer(http.Dir("admin/dist")))
-	adminRouter.Mount("/swagger-ui/", http.StripPrefix("/swagger-ui/", http.FileServer(http.Dir("swagger-ui"))))
 
+	// Static files
+	adminRouter.Mount("/", http.FileServer(http.Dir("admin/dist")))
+	adminRouter.Mount("/swagger-ui/",
+		http.StripPrefix("/swagger-ui/", http.FileServer(http.Dir("swagger-ui"))))
+
+	// Start servers
 	eg := errgroup.Group{}
 	// start RTM event checker
 	eg.Go(func() error { return bot.Run() })
