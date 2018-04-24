@@ -16,6 +16,14 @@ type AdminAPI struct {
 	Validator        *domain.Validator
 }
 
+func NewAdminAPI(configRepository domain.ConfigRepository, chatRepository domain.ChatRepository) *AdminAPI {
+	return &AdminAPI{
+		ConfigRepository: configRepository,
+		ChatRepository:   chatRepository,
+		Validator:        domain.NewValidator(),
+	}
+}
+
 func (a *AdminAPI) GetConfig(ctx context.Context, request *proto.GetConfigRequest) (*proto.Config, error) {
 	config, err := a.ConfigRepository.GetConfig(request.ID)
 	if err != nil {
