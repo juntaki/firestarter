@@ -311,7 +311,7 @@ func (s *SlackBot) SendRequest(c *domain.Config, sess *SessionValue) error {
 		return errors.New("POST request failed")
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode >= 200 && resp.StatusCode <= 299 {
+	if !(resp.StatusCode >= 200 && resp.StatusCode <= 299) {
 		s.Log.Infof("Send request failed status: %d", resp.StatusCode)
 		return errors.Errorf("Send request failed status: %d", resp.StatusCode)
 	}
