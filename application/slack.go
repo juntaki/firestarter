@@ -331,7 +331,18 @@ func (s *SlackBot) getChannelName(channelID string) (string, error) {
 	return ch.Name, nil
 }
 
-func (s *SlackBot) Run() error {
+func (s *SlackBot) Run() {
+	defer func() {
+		if err := recover(); err != nil {
+			fmt.Println("Recover from panic")
+			fmt.Println(err)
+			go s.Run()
+		}
+	}()
+	s.start()
+}
+
+func (s *SlackBot) start() error {
 	rtm := s.API.NewRTM()
 	go rtm.ManageConnection()
 
@@ -366,10 +377,10 @@ func (s *SlackBot) Run() error {
 			}
 
 			message := ev.Msg.Text
-			if message == "" { // IFTTT message with title
+			if message == "" && len(ev.Msg.Attachments) > 0 { // IFTTT message with title
 				message = ev.Msg.Attachments[0].Text
 			}
-			if message == "" { // IFTTT message only
+			if message == "" && len(ev.Msg.Attachments) > 0 { // IFTTT message only
 				message = ev.Msg.Attachments[0].Pretext
 			}
 

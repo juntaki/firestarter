@@ -92,7 +92,7 @@ func main() {
 	// Start servers
 	eg := errgroup.Group{}
 	// start RTM event checker
-	eg.Go(func() error { return bot.Run() })
+	bot.Run()
 	// start HTTP server for interactive message.
 	eg.Go(func() error { return http.ListenAndServe(":3000", botRouter) })
 	// start HTTP server for admin.
